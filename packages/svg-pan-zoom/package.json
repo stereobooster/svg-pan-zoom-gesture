@@ -1,0 +1,36 @@
+{
+  "name": "@stereobooster/svg-pan-zoom",
+  "version": "0.0.1",
+  "description": "Pan and zoom for SVG images",
+  "homepage": "https://github.com/stereobooster/svg-pan-zoom",
+  "author": "stereobooster",
+  "license": "MIT",
+  "keywords": [
+    "svg",
+    "pan",
+    "zoom",
+    "gestures",
+    "touchscreen"
+  ],
+  "type": "module",
+  "exports": {
+    "types": "./dist/index.d.js",
+    "default": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "files": [
+    "./dist/*"
+  ],
+  "types": "./dist/index.d.js",
+  "scripts": {
+    "test": "vitest",
+    "prepublishOnly": "npm run build",
+    "build": "rm -rf dist && tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "tsc": "tsc"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}

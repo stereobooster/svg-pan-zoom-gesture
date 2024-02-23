@@ -16,6 +16,10 @@ importers:
         version: 5.2.2
 
   packages/example:
+    dependencies:
+      '@stereobooster/svg-pan-zoom':
+        specifier: workspace:*
+        version: link:../svg-pan-zoom
     devDependencies:
       typescript:
         specifier: ^5.2.2
@@ -23,6 +27,8 @@ importers:
       vite:
         specifier: ^5.1.4
         version: 5.1.4
+
+  packages/svg-pan-zoom: {}
 
 packages:
 

@@ -8,6 +8,9 @@
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
+  "dependencies": {
+    "@stereobooster/svg-pan-zoom": "workspace:*"
+  },
   "devDependencies": {
     "typescript": "^5.2.2",
     "vite": "^5.1.4"
