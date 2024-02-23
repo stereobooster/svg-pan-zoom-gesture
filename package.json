@@ -1,0 +1,19 @@
+{
+    "name": "svg-pan-zoom",
+    "type": "module",
+    "private": true,
+    "workspaces": [
+      "packages/*"
+    ],
+    "dependencies": {
+      "turbo": "^1.10.16",
+      "typescript": "^5.2.2"
+    },
+    "scripts": {
+      "test": "turbo run test",
+      "build": "turbo run build",
+      "dev": "turbo run dev",
+      "clean": "turbo run clean",
+      "tsc": "turbo run tsc"
+    }
+  }
