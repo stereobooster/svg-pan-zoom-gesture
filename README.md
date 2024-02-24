@@ -51,7 +51,12 @@ Notes:
 
 - [svg `viewBox`](https://css-tricks.com/creating-a-panning-effect-for-svg/)
 - [root element `transform`](https://www.petercollingridge.co.uk/tutorials/svg/interactive/pan-and-zoom/)
-- [`position: relative` and `CSS transform`](https://codesandbox.io/p/sandbox/github/pmndrs/use-gesture/tree/main/demo/src/sandboxes/card-zoom?file=%2Fsrc%2FApp.tsx%3A22%2C10-22%2C15)
+- [`position: relative` and `CSS transform`](https://stackblitz.com/edit/multi-touch-trackpad-gesture?file=index.js)
+  - see also [use-gesture example](https://codesandbox.io/p/sandbox/github/pmndrs/use-gesture/tree/main/demo/src/sandboxes/card-zoom?file=%2Fsrc%2FApp.tsx%3A22%2C10-22%2C15)
+
+### Other
+
+- [Detect touchpad vs mouse in Javascript](https://stackoverflow.com/a/62415754)
 
 ## Alternatives
 
