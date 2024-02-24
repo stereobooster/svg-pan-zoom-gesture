@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@media (hover: none) {
+  svg {
+    touch-action: none;
+  }
+  * {
+    user-select: none;
+  }
+}
