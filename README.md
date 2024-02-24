@@ -29,7 +29,7 @@ Notes:
 ### Features
 
 - core
-  - programmatic zoom, pan 
+  - programmatic zoom, pan
   - interaction for zoom (without buttons)
   - interaction for pan (without buttons)
   - overlay (see above point 6)
@@ -45,6 +45,14 @@ Notes:
   - minimap
   - zoom to object
 
+## Implementation
+
+### Transformation
+
+- [svg `viewBox`](https://css-tricks.com/creating-a-panning-effect-for-svg/)
+- [root element `transform`](https://www.petercollingridge.co.uk/tutorials/svg/interactive/pan-and-zoom/)
+- [`position: relative` and `CSS transform`](https://codesandbox.io/p/sandbox/github/pmndrs/use-gesture/tree/main/demo/src/sandboxes/card-zoom?file=%2Fsrc%2FApp.tsx%3A22%2C10-22%2C15)
+
 ## Alternatives
 
 There are a lot of solutions for this problem:
@@ -53,11 +61,9 @@ There are a lot of solutions for this problem:
 - https://jillix.github.io/svg.pan-zoom.js/
 - https://github.com/anvaka/panzoom
 - https://www.npmjs.com/package/svg-pan-zoom-container
-- https://www.petercollingridge.co.uk/tutorials/svg/interactive/pan-and-zoom/
 - https://svgjs.dev/docs/3.0/plugins/svg-panzoom-js/
 - https://www.npmjs.com/package/react-svg-pan-zoom
 - https://timmywil.com/panzoom/
 - https://www.jqueryscript.net/other/SVG-Pan-Zoom-jQuery-SVGPanZoom.html
 - https://www.d3indepth.com/zoom-and-pan/
 - https://www.npmjs.com/package/react-zoom-pan-pinch
-- https://css-tricks.com/creating-a-panning-effect-for-svg/
