@@ -7,6 +7,52 @@ function init() {
 
   if (!svg) return;
 
+  // const debugEvent = (ev: string, map?: any) =>
+  //   svg.addEventListener(ev, (e) => console.log(ev, map ? map(e) : e), {
+  //     passive: true,
+  //   });
+
+  // debugEvent("pointerdown");
+  // debugEvent("pointerup");
+  // debugEvent("pointerleave");
+  // debugEvent("pointermove");
+
+  // debugEvent("mousedown");
+  // debugEvent("mouseup");
+  // debugEvent("mouseleave");
+  // debugEvent("mousemove");
+
+  // debugEvent("touchstart");
+  // debugEvent("touchend");
+  // debugEvent("touchmove");
+
+  // debugEvent("gesturestart");
+  // debugEvent("gesturechange");
+  // debugEvent("gestureend");
+
+  // debugEvent(
+  //   "wheel",
+  //   ({
+  //     clientX,
+  //     clientY,
+  //     deltaY,
+  //     deltaX,
+  //     deltaMode,
+  //     wheelDeltaX,
+  //     wheelDeltaY,
+  //   }: any) => ({
+  //     clientX,
+  //     clientY,
+  //     deltaY,
+  //     deltaX,
+  //     deltaMode,
+  //     wheelDeltaX,
+  //     wheelDeltaY,
+  //   })
+  // );
+  // debugEvent("scroll");
+  // debugEvent("mousewheel");
+
   // If browser supports pointer events
   if (window.PointerEvent) {
     svg.addEventListener("pointerdown", onPointerDown, { passive: true }); // Pointer is pressed
@@ -88,4 +134,70 @@ function init() {
   }
 }
 
-init();
+// init();
+
+// https://stackblitz.com/edit/multi-touch-trackpad-gesture?file=index.js
+function init2() {
+  const svg = document.querySelector("svg");
+  const svgContainer = document.querySelector(
+    ".svgContainer"
+  ) as HTMLDivElement;
+
+  if (!svg || !svgContainer) return;
+
+  // svg.style.pointerEvents = "none";
+
+  let rotation = 0;
+  let scale = 1;
+  let posX = 0;
+  let posY = 0;
+
+  const render = () => {
+    window.requestAnimationFrame(() => {
+      let val = `translate3D(${posX}px, ${posY}px, 0px) rotate(${rotation}deg) scale(${scale})`;
+      svg.style.transform = val;
+    });
+  };
+
+  svgContainer.addEventListener("wheel", (e) => {
+    // pinch gesture on touchpad or Ctrl + wheel
+    if (e.ctrlKey) {
+      scale -= e.deltaY * 0.01;
+      e.preventDefault();
+      render();
+    } else {
+      // posX -= e.deltaX * 2;
+      // posY -= e.deltaY * 2;
+    }
+  });
+
+  let x = 0;
+  let y = 0;
+  let mousedown = false;
+
+  svgContainer.addEventListener("mousedown", (e) => {
+    mousedown = true;
+    x = e.clientX;
+    y = e.clientY;
+  });
+
+  svgContainer.addEventListener("mouseup", (e) => {
+    mousedown = false;
+  });
+
+  svgContainer.addEventListener("mouseleave", (e) => {
+    mousedown = false;
+  });
+
+  svgContainer.addEventListener("mousemove", (e) => {
+    if (!mousedown) return;
+
+    posX -= x - e.clientX;
+    posY -= y - e.clientY;
+    x = e.clientX;
+    y = e.clientY;
+    render();
+  });
+}
+
+init2();

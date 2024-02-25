@@ -10,3 +10,7 @@
     user-select: none;
   }
 }
+
+.svgContainer {
+  overflow: hidden;
+}
