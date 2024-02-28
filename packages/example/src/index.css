@@ -14,3 +14,7 @@
 .svgContainer {
   overflow: hidden;
 }
+
+/* debug */
+.svgContainer { border: 1px solid green; }
+svg { border: 1px solid red; }

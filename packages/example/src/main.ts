@@ -145,25 +145,32 @@ function init2() {
 
   if (!svg || !svgContainer) return;
 
-  // svg.style.pointerEvents = "none";
+  svg.style.pointerEvents = "none";
 
-  let rotation = 0;
-  let scale = 1;
-  let posX = 0;
-  let posY = 0;
+  // matrix(scaleX(), skewY(), skewX(), scaleY(), translateX(), translateY())
+  //                           a  b  c  d  e  f
+  let current = new DOMMatrix([1, 0, 0, 1, 0, 0]);
 
   const render = () => {
     window.requestAnimationFrame(() => {
-      let val = `translate3D(${posX}px, ${posY}px, 0px) rotate(${rotation}deg) scale(${scale})`;
-      svg.style.transform = val;
+      svg.style.transform = current.toString();
     });
   };
+
+  const { width, height } = svg.getBoundingClientRect();
 
   svgContainer.addEventListener("wheel", (e) => {
     // pinch gesture on touchpad or Ctrl + wheel
     if (e.ctrlKey) {
-      scale -= e.deltaY * 0.01;
       e.preventDefault();
+      // it almost works
+      // @ts-expect-error
+      let tx = e.layerX - width / 2;
+      // @ts-expect-error
+      let ty = e.layerY - height / 2;
+      current.translateSelf(tx, ty);
+      current.scaleSelf(1 - e.deltaY * 0.01);
+      current.translateSelf(-tx, -ty);
       render();
     } else {
       // posX -= e.deltaX * 2;
@@ -179,6 +186,26 @@ function init2() {
     mousedown = true;
     x = e.clientX;
     y = e.clientY;
+
+    if (e.metaKey) {
+      const x = current.e;
+      const y = current.f;
+      current.translateSelf(-x / current.a, -y / current.a);
+
+      current.transformPoint;
+
+      // @ts-expect-error
+      let tx = e.layerX - x - width / 2;
+      // @ts-expect-error
+      let ty = e.layerY - y - height / 2;
+
+      current.translateSelf(tx, ty);
+      current.scaleSelf(0.8);
+      current.translateSelf(-tx, -ty);
+
+      current.translateSelf(x / current.a, y / current.a);
+      render();
+    }
   });
 
   svgContainer.addEventListener("mouseup", (e) => {
@@ -191,13 +218,109 @@ function init2() {
 
   svgContainer.addEventListener("mousemove", (e) => {
     if (!mousedown) return;
+    const tx = e.clientX - x;
+    const ty = e.clientY - y;
+    const scale = current.a;
+    current.translateSelf(tx / scale, ty / scale);
+    console.log(current.e, current.f);
+    render();
 
-    posX -= x - e.clientX;
-    posY -= y - e.clientY;
     x = e.clientX;
     y = e.clientY;
-    render();
   });
 }
 
-init2();
+// init2();
+
+// https://stackoverflow.com/questions/60190965/zoom-scale-at-mouse-position
+// https://stackoverflow.com/questions/57262208/javascript-zoom-in-out-to-mouse-x-y-coordinates
+function init3() {
+  const svg = document.querySelector("svg");
+  if (!svg) return;
+
+  const view = (() => {
+    const matrix = [1, 0, 0, 1, 0, 0]; // current view transform
+    let m = matrix; // alias
+    let scale = 1; // current scale
+    const pos = { x: 0, y: 0 }; // current position of origin
+    let dirty = true;
+    const API = {
+      applyTo(el: any) {
+        if (dirty) {
+          this.update();
+        }
+        el.style.transform = `matrix(${m[0]},${m[1]},${m[2]},${m[3]},${m[4]},${m[5]})`;
+      },
+      update() {
+        dirty = false;
+        m[3] = m[0] = scale;
+        m[2] = m[1] = 0;
+        m[4] = pos.x;
+        m[5] = pos.y;
+      },
+      pan(at: any) {
+        if (dirty) {
+          this.update();
+        }
+        pos.x += at.x;
+        pos.y += at.y;
+        dirty = true;
+      },
+      scaleAt(at: any, amount: number) {
+        // at in screen coords
+        if (dirty) {
+          this.update();
+        }
+        scale *= amount;
+        pos.x = at.x - (at.x - pos.x) * amount;
+        pos.y = at.y - (at.y - pos.y) * amount;
+        dirty = true;
+      },
+    };
+    return API;
+  })();
+
+  document.addEventListener("mousemove", mouseEvent, { passive: false });
+  document.addEventListener("mousedown", mouseEvent, { passive: false });
+  document.addEventListener("mouseup", mouseEvent, { passive: false });
+  document.addEventListener("mouseout", mouseEvent, { passive: false });
+  document.addEventListener("wheel", mouseWheelEvent, { passive: false });
+
+  const mouse = { x: 0, y: 0, oldX: 0, oldY: 0, button: false };
+  function mouseEvent(event: MouseEvent) {
+    if (event.type === "mousedown") {
+      mouse.button = true;
+    }
+    if (event.type === "mouseup" || event.type === "mouseout") {
+      mouse.button = false;
+    }
+    mouse.oldX = mouse.x;
+    mouse.oldY = mouse.y;
+    mouse.x = event.pageX;
+    mouse.y = event.pageY;
+    // console.log(mouse)
+    if (mouse.button) {
+      // pan
+      view.pan({ x: mouse.x - mouse.oldX, y: mouse.y - mouse.oldY });
+      view.applyTo(svg!);
+    }
+    event.preventDefault();
+  }
+
+  function mouseWheelEvent(event: WheelEvent) {
+    // console.log(svg?.width + 0, svg?.height+ 0, svg?.x+ 0, svg?.y+ 0)
+    const x = event.pageX - svg.width / 2;
+    const y = event.pageY - svg.height / 2;
+
+    if (event.deltaY < 0) {
+      view.scaleAt({ x, y }, 1.1);
+      view.applyTo(svg);
+    } else {
+      view.scaleAt({ x, y }, 1 / 1.1);
+      view.applyTo(svg);
+    }
+    event.preventDefault();
+  }
+}
+
+init3();
