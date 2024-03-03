@@ -3,9 +3,6 @@
 @tailwind utilities;
 
 @media (hover: none) {
-  svg {
-    touch-action: none;
-  }
   * {
     user-select: none;
   }
@@ -13,13 +10,15 @@
 
 .svgContainer {
   overflow: hidden;
-}
-
-/* debug */
-.svgContainer { border: 1px solid green; }
-svg { border: 1px solid red; }
-
-canvas {
   touch-action: none;
   user-select: none;
 }
+
+svg {
+  will-change: transform;
+  pointer-events: none;
+}
+
+/* debug */
+/* .svgContainer { border: 1px solid green; }
+svg { border: 1px solid red; } */
