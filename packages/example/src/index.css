@@ -18,3 +18,8 @@
 /* debug */
 .svgContainer { border: 1px solid green; }
 svg { border: 1px solid red; }
+
+canvas {
+  touch-action: none;
+  user-select: none;
+}
