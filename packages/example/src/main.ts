@@ -1,7 +1,13 @@
 import "./index.css";
 import * as math from "mathjs";
+// import { DragGesture, PinchGesture } from "@use-gesture/vanilla";
+// import anime from "animejs/lib/anime.es.js";
 
-function draw() {
+type Coords = Array<[number, number]>;
+
+// constructor: wrapper, element to scale
+// on/off event listeners
+function init() {
   const svg = document.querySelector("svg");
   const svgContainer = document.querySelector(
     ".svgContainer"
@@ -20,6 +26,8 @@ function draw() {
     ]})`;
   }
 
+  // maybe can use `matrixTransform()` from
+  // https://developer.mozilla.org/en-US/docs/Web/API/DOMPointReadOnly
   function transformXY(m: math.Matrix, x: number, y: number) {
     const nm = math.multiply(m, [x, y, 1]);
     return [nm.get([0]), nm.get([1])] as const;
@@ -47,11 +55,41 @@ function draw() {
     );
   }
 
-  function getXY(e: MouseEvent) {
-    const rect = svgContainer.getBoundingClientRect();
-    const x = e.pageX - rect.x - window.scrollX - rect.width / 2;
-    const y = e.pageY - rect.y - window.scrollY - rect.height / 2;
-    return [x, y] as const;
+  function getXY(e: MouseEvent | TouchEvent, layer = true) {
+    let coords: Coords =
+      "touches" in e
+        ? Array.from(e.touches).map((t) => [t.clientX, t.clientY])
+        : [[e.clientX, e.clientY]];
+
+    if (layer) {
+      const rect = svgContainer.getBoundingClientRect();
+      coords = coords.map(([x, y]) => [
+        x - rect.x - rect.width / 2,
+        y - rect.y - rect.height / 2,
+      ]);
+    }
+
+    return coords;
+  }
+
+  function center(coords: Coords) {
+    return coords.length > 1
+      ? coords.reduce(([xAcc, yAcc], [x, y]) => [xAcc + x, yAcc + y], [0, 0])
+      : coords[0];
+  }
+
+  function centerDiff(co1: Coords, co2: Coords) {
+    const c1 = center(co1);
+    const c2 = center(co2);
+    return [c1[0] - c2[0], c1[1] - c2[1]] as const;
+  }
+
+  function distance(c: Coords) {
+    return c.length === 2
+      ? Math.sqrt(
+          Math.pow(c[0][0] - c[1][0], 2) + Math.pow(c[0][1] - c[1][1], 2)
+        )
+      : 0;
   }
 
   let current = math.matrix([
@@ -68,71 +106,127 @@ function draw() {
     });
   }
 
-  svgContainer.addEventListener("wheel", (e) => {
-    // pinch gesture on touchpad or Ctrl + wheel
-    if (e.ctrlKey) {
-      e.preventDefault();
-      const scaleFactor = 1 - e.deltaY * 0.01;
+  let mousedown = false;
+  let originXY: Coords;
+  let currentXY: Coords;
 
-      const [x, y] = getXY(e);
+  function onPointerDown(e: MouseEvent | TouchEvent) {
+    if ("touches" in e) {
+      mousedown = e.touches.length === 2;
+      if (e.touches.length !== 2) return;
+      e.preventDefault();
+    } else {
+      mousedown = true;
+    }
+    originXY = getXY(e);
+    currentXY = originXY;
+  }
+
+  function onPointerUp(e: MouseEvent | TouchEvent) {
+    if ("touches" in e) {
+      mousedown = e.touches.length !== 2;
+    } else {
+      mousedown = false;
+    }
+  }
+
+  function onPointerMove(e: MouseEvent | TouchEvent) {
+    if (!mousedown) return;
+    let xy = getXY(e);
+    let isPinch = false;
+    const currentScale = current.get([0, 0]);
+    let scaleFactor = 0;
+    if ("touches" in e) {
+      if (e.touches.length !== 2) return;
+      e.preventDefault();
+      scaleFactor = distance(xy) / distance(originXY);
+      // it kind of works, but not ideal
+      isPinch = Math.abs(1 - scaleFactor) > 0.02;
+    }
+
+    if (isPinch) {
+      const [x, y] = center(xy);
       const scaleMatrix = scale(current, scaleFactor);
       const [nx1, ny1] = transformXY(math.inv(current), x, y);
       const [nx2, ny2] = transformXY(math.inv(scaleMatrix), x, y);
       current = translate(scaleMatrix, nx2 - nx1, ny2 - ny1);
-
-      render();
+      originXY = xy;
     } else {
-      // posX -= e.deltaX * 2;
-      // posY -= e.deltaY * 2;
+      const [dx, dy] = centerDiff(xy, currentXY);
+      current = translate(current, dx / currentScale, dy / currentScale);
     }
-  });
 
-  let x = 0;
-  let y = 0;
-  let mousedown = false;
+    render();
+    currentXY = xy;
+  }
 
-  svgContainer.addEventListener(
-    "mousedown",
-    (e) => {
-      mousedown = true;
-      x = e.clientX;
-      y = e.clientY;
-    },
-    { passive: true }
-  );
+  // https://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript
+  if (window.matchMedia("(pointer: coarse)").matches) {
+    // if (window.PointerEvent) {
+    //   svgContainer.addEventListener("pointerdown", onPointerDown); // Pointer is pressed
+    //   svgContainer.addEventListener("pointerup", onPointerUp); // Releasing the pointer
+    //   svgContainer.addEventListener("pointerleave", onPointerUp); // Pointer gets out of the SVG area
+    //   svgContainer.addEventListener("pointermove", onPointerMove); // Pointer is moving
+    // } else {
+    svgContainer.addEventListener("touchstart", onPointerDown);
+    svgContainer.addEventListener("touchend", onPointerUp);
+    svgContainer.addEventListener("touchmove", onPointerMove);
+    // }
+  } else {
+    svgContainer.addEventListener("wheel", (e) => {
+      // pinch gesture on touchpad or Ctrl + wheel
+      if (e.ctrlKey) {
+        e.preventDefault();
+        const scaleFactor = 1 - e.deltaY * 0.01;
 
-  svgContainer.addEventListener(
-    "mouseup",
-    () => {
-      mousedown = false;
-    },
-    { passive: true }
-  );
+        const [x, y] = center(getXY(e));
+        const scaleMatrix = scale(current, scaleFactor);
+        const [nx1, ny1] = transformXY(math.inv(current), x, y);
+        const [nx2, ny2] = transformXY(math.inv(scaleMatrix), x, y);
+        current = translate(scaleMatrix, nx2 - nx1, ny2 - ny1);
 
-  svgContainer.addEventListener(
-    "mouseleave",
-    () => {
-      mousedown = false;
-    },
-    { passive: true }
-  );
+        render();
+      }
+    });
 
-  svgContainer.addEventListener(
-    "mousemove",
-    (e) => {
-      if (!mousedown) return;
-      const dx = e.clientX - x;
-      const dy = e.clientY - y;
-      const scale = current.get([0, 0]);
-      current = translate(current, dx / scale, dy / scale);
-
-      render();
-
-      x = e.clientX;
-      y = e.clientY;
-    },
-    { passive: true }
-  );
+    svgContainer.addEventListener("mousedown", onPointerDown, {
+      passive: true,
+    });
+    svgContainer.addEventListener("mouseup", onPointerUp, { passive: true });
+    svgContainer.addEventListener("mouseleave", onPointerUp, { passive: true });
+    svgContainer.addEventListener("mousemove", onPointerMove, {
+      passive: true,
+    });
+  }
 }
 
-draw();
+init();
+
+// function init2() {
+//   const svg = document.querySelector("svg");
+//   const svgContainer = document.querySelector(".svgContainer");
+//   if (!svg || !svgContainer) return;
+
+//   new DragGesture(
+//     svgContainer,
+//     ({ active, pinching, cancel, movement: [mx, my] }) => {
+//       if (pinching) cancel();
+//       anime({
+//         targets: svg,
+//         translateX: active ? mx : 0,
+//         translateY: active ? my : 0,
+//         duration: active ? 0 : 1000,
+//       });
+//     }
+//   );
+
+//   new PinchGesture(svgContainer, ({ origin, offset: [s] }) => {
+//     anime({
+//       targets: svg,
+//       scale: s,
+//       duration: 0,
+//     });
+//   });
+// }
+
+// init2();

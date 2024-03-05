@@ -20,9 +20,15 @@ importers:
       '@stereobooster/svg-pan-zoom':
         specifier: workspace:*
         version: link:../svg-pan-zoom
+      '@types/animejs':
+        specifier: ^3.1.12
+        version: 3.1.12
       '@use-gesture/vanilla':
         specifier: ^10.3.0
         version: 10.3.0
+      animejs:
+        specifier: ^3.2.2
+        version: 3.2.2
       mathjs:
         specifier: ^12.4.0
         version: 12.4.0
@@ -458,6 +464,10 @@ packages:
       tailwindcss: 3.4.1
     dev: true
 
+  /@types/animejs@3.1.12:
+    resolution: {integrity: sha512-fpdH+ZtlO0kqjTOqRaBdsEmvpRNOayI8k4EVkEtitL5l6wducDOXk0rgQgfZqWf/ZX9DzXrHf257S5i9xTcISQ==}
+    dev: false
+
   /@types/estree@1.0.5:
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
     dev: true
@@ -470,6 +480,10 @@ packages:
     resolution: {integrity: sha512-hehZWLaNyNc+TWAbhJpj84yumD8ZBp/eet6HGg3xztPcchuNNTGEu5LEEdSg69SXHzS7exWE6j5VnsZ3VXVFxQ==}
     dependencies:
       '@use-gesture/core': 10.3.0
+    dev: false
+
+  /animejs@3.2.2:
+    resolution: {integrity: sha512-Ao95qWLpDPXXM+WrmwcKbl6uNlC5tjnowlaRYtuVDHHoygjtIPfDUoK9NthrlZsQSKjZXlmji2TrBUAVbiH0LQ==}
     dev: false
 
   /ansi-regex@5.0.1:

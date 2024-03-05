@@ -58,6 +58,8 @@ Notes:
 
 - [Detect touchpad vs mouse in Javascript](https://stackoverflow.com/a/62415754)
 - [Affine matrix](https://upload.wikimedia.org/wikipedia/commons/2/2c/2D_affine_transformation_matrix.svg)
+- [transform matrix](https://developer.mozilla.org/en-US/docs/Web/CSS/transform-function/matrix)
+- [DOMMatrix](https://developer.mozilla.org/en-US/docs/Web/API/DOMMatrix)
 
 ## Alternatives
 
