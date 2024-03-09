@@ -1,4 +1,5 @@
 import * as math from "mathjs";
+import { fdm, scale, tdm, transformXY, translate } from "./utils";
 
 function draw() {
   const canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -49,56 +50,10 @@ function draw() {
     ctx.stroke();
   }
 
-  function fdm(m: DOMMatrix) {
-    return math.matrix([
-      [m.a, m.c, m.e],
-      [m.b, m.d, m.f],
-      [0, 0, 1],
-    ]);
-  }
-
-  function tdm(m: math.Matrix) {
-    return new DOMMatrix([
-      m.get([0, 0]),
-      m.get([1, 0]),
-      m.get([0, 1]),
-      m.get([1, 1]),
-      m.get([0, 2]),
-      m.get([1, 2]),
-    ]);
-  }
-
-  function transformXY(m: math.Matrix, x: number, y: number) {
-    const nm = math.multiply(m, [x, y, 1]);
-    return [nm.get([0]), nm.get([1])] as const;
-  }
-
-  function scale(m: math.Matrix, sf: number) {
-    return math.multiply(
-      m,
-      math.matrix([
-        [sf, 0, 0],
-        [0, sf, 0],
-        [0, 0, 1],
-      ])
-    );
-  }
-
-  function translate(m: math.Matrix, dx: number, dy: number) {
-    return math.multiply(
-      m,
-      math.matrix([
-        [1, 0, dx],
-        [0, 1, dy],
-        [0, 0, 1],
-      ])
-    );
-  }
-
   function getXY(e: MouseEvent) {
     const rect = canvas.getBoundingClientRect();
-    const x = e.pageX - rect.x - window.scrollX;
-    const y = e.pageY - rect.y - window.scrollY;
+    const x = e.clientX - rect.x;
+    const y = e.clientY - rect.y;
     return [x, y] as const;
   }
 
