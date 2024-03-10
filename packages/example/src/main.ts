@@ -1,21 +1,6 @@
 import "./index.css";
-import * as math from "mathjs";
-import {
-  Coords,
-  center,
-  centerDiff,
-  distance,
-  scale,
-  transformXY,
-  translate,
-  ttm,
-} from "./utils";
-
-const identity = math.matrix([
-  [1, 0, 0],
-  [0, 1, 0],
-  [0, 0, 1],
-]);
+import { getScale, identity, scaleAt, translate, ttm } from "./utilsDom";
+import { Coords, center, centerDiff, distance } from "./utils";
 
 class SvgPanZoom {
   #element: HTMLElement | SVGSVGElement;
@@ -111,7 +96,7 @@ class SvgPanZoom {
       // isPinch = Math.abs(distance(xy) - distance(originXY)) > 35;
     }
 
-    const currentScale = this.#curMatrix.get([0, 0]);
+    const currentScale = getScale(this.#curMatrix);
     const [dx, dy] = centerDiff(xy, this.#currentXY);
     this.#curMatrix = translate(
       this.#curMatrix,
@@ -130,17 +115,17 @@ class SvgPanZoom {
 
   #scale(scaleFactor: number, xy: Coords) {
     const [x, y] = center(xy);
-    const scaleMatrix = scale(this.#curMatrix, scaleFactor);
-    const [nx1, ny1] = transformXY(math.inv(this.#curMatrix), x, y);
-    const [nx2, ny2] = transformXY(math.inv(scaleMatrix), x, y);
-    this.#curMatrix = translate(scaleMatrix, nx2 - nx1, ny2 - ny1);
+    this.#curMatrix = scaleAt(this.#curMatrix, scaleFactor, x, y);
   }
 
   #animate() {
     const t = 300;
     this.#element.style.transitionProperty = "transform";
     this.#element.style.transitionDuration = `${t}ms`;
-    setTimeout(() => (this.#element.style.transitionDuration = "0ms"), t);
+    setTimeout(() => {
+      this.#element.style.transitionDuration = "";
+      this.#element.style.transitionProperty = "";
+    }, t);
   }
 
   reset() {
@@ -151,7 +136,7 @@ class SvgPanZoom {
 
   pan(dx: number, dy: number) {
     this.#animate();
-    const currentScale = this.#curMatrix.get([0, 0]);
+    const currentScale = getScale(this.#curMatrix);
     this.#curMatrix = translate(
       this.#curMatrix,
       dx / currentScale,

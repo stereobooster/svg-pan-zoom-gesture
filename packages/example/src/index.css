@@ -43,6 +43,10 @@ svg {
   opacity: 1;
 }
 
+.svgButtons:focus-within {
+  opacity: 1;
+}
+
 /* debug */
 /* .svgContainer { border: 1px solid green; }
 svg { border: 1px solid red; } */

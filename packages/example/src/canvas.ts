@@ -1,5 +1,5 @@
 import * as math from "mathjs";
-import { fdm, scale, tdm, transformXY, translate } from "./utils";
+import { fdm, scale, tdm, transformXY, translate } from "./utilsMath";
 
 function draw() {
   const canvas = document.getElementById("canvas") as HTMLCanvasElement;

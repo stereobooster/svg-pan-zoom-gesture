@@ -7,7 +7,6 @@ Basic idea is to add pan and zoom to SVG. For example like in Google maps or Git
 ## TODO
 
 - what if container larger/smaller than svg
-- change `math.matrix` to `DOMMatrxi`/`DOMPoint`
 - min/max zoom
 - show/hide UI on hover/one-finger-tap
 - rubber-band on over-drag
