@@ -10,10 +10,105 @@ export class SvgPanZoom {
   #mousedown = false;
   #originXY: Coords = [];
   #currentXY: Coords = [];
+  #listeners: Record<string, any>;
 
   constructor(element: HTMLElement | SVGSVGElement, container: HTMLElement) {
     this.#element = element;
     this.#container = container;
+
+    const onPointerDown = (e: MouseEvent | TouchEvent) => {
+      const xy = this.#getXY(e);
+      if ("touches" in e) {
+        this.#mousedown = e.touches.length === 2;
+        if (this.#mousedown) {
+          e.preventDefault();
+          // document.body.style.overflow = "none";
+        }
+        // else {
+        //   document.body.style.overflow = "auto";
+        // }
+        if (e.touches.length === 1) {
+          if (this.#tapedTwice) {
+            if (distance([xy[0], this.#originXY[0]]) < 20) {
+              this.reset();
+            } else {
+              this.#tapedTwice = false;
+            }
+          } else {
+            this.#tapedTwice = true;
+            setTimeout(() => (this.#tapedTwice = false), 300);
+          }
+        }
+      } else {
+        this.#mousedown = true;
+        this.#container.style.cursor = "grabbing";
+      }
+      this.#originXY = xy;
+      this.#currentXY = xy;
+    };
+
+    const onPointerUp = (e: MouseEvent | TouchEvent) => {
+      if ("touches" in e) {
+        this.#mousedown = e.touches.length === 2;
+        // if (!mousedown) {
+        //   document.body.style.overflow = "auto";
+        // }
+      } else {
+        this.#mousedown = false;
+        this.#container.style.cursor = "grab";
+      }
+    };
+
+    const onPointerMove = (e: MouseEvent | TouchEvent) => {
+      if (!this.#mousedown) return;
+      let xy = this.#getXY(e);
+      let isPinch = false;
+      if ("touches" in e) {
+        if (e.touches.length !== 2) return;
+        e.preventDefault();
+        const originScaleFactor = distance(xy) / distance(this.#originXY);
+        isPinch = Math.abs(1 - originScaleFactor) > 0.1;
+      }
+      this.#translate(...centerDiff(xy, this.#currentXY));
+      if (isPinch) {
+        const scaleFactor = distance(xy) / distance(this.#currentXY);
+        this.#scale(scaleFactor, xy);
+      }
+      this.#render();
+      this.#currentXY = xy;
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      // pinch gesture on touchpad or Ctrl + wheel
+      if (e.ctrlKey) {
+        e.preventDefault();
+        this.#scale(1 - e.deltaY * 0.01, this.#getXY(e));
+        this.#render();
+      }
+    };
+
+    const onDblClick = (e: MouseEvent) => {
+      if (e.target !== this.#container) return;
+      this.reset();
+    };
+
+    // https://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript
+    if (window.matchMedia("(pointer: coarse)").matches) {
+      this.#listeners = {
+        touchstart: onPointerDown,
+        touchend: onPointerUp,
+        touchmove: onPointerMove,
+      };
+    } else {
+      this.#listeners = {
+        wheel: onWheel,
+        mousedown: onPointerDown,
+        mouseup: onPointerUp,
+        mouseleave: onPointerUp,
+        mousemove: onPointerMove,
+        dblclick: onDblClick,
+      };
+    }
   }
 
   #getXY(e: MouseEvent | TouchEvent, layer = true) {
@@ -38,68 +133,6 @@ export class SvgPanZoom {
     this.#raf = window.requestAnimationFrame(() => {
       this.#element.style.transform = ttm(this.#curMatrix);
     });
-  }
-
-  #onPointerDown(e: MouseEvent | TouchEvent) {
-    const xy = this.#getXY(e);
-    if ("touches" in e) {
-      this.#mousedown = e.touches.length === 2;
-      if (this.#mousedown) {
-        e.preventDefault();
-        // document.body.style.overflow = "none";
-      }
-      // else {
-      //   document.body.style.overflow = "auto";
-      // }
-      if (e.touches.length === 1) {
-        if (this.#tapedTwice) {
-          if (distance([xy[0], this.#originXY[0]]) < 20) {
-            this.reset();
-          } else {
-            this.#tapedTwice = false;
-          }
-        } else {
-          this.#tapedTwice = true;
-          setTimeout(() => (this.#tapedTwice = false), 300);
-        }
-      }
-    } else {
-      this.#mousedown = true;
-      this.#container.style.cursor = "grabbing";
-    }
-    this.#originXY = xy;
-    this.#currentXY = xy;
-  }
-
-  #onPointerUp(e: MouseEvent | TouchEvent) {
-    if ("touches" in e) {
-      this.#mousedown = e.touches.length === 2;
-      // if (!mousedown) {
-      //   document.body.style.overflow = "auto";
-      // }
-    } else {
-      this.#mousedown = false;
-      this.#container.style.cursor = "grab";
-    }
-  }
-
-  #onPointerMove(e: MouseEvent | TouchEvent) {
-    if (!this.#mousedown) return;
-    let xy = this.#getXY(e);
-    let isPinch = false;
-    if ("touches" in e) {
-      if (e.touches.length !== 2) return;
-      e.preventDefault();
-      const originScaleFactor = distance(xy) / distance(this.#originXY);
-      isPinch = Math.abs(1 - originScaleFactor) > 0.1;
-    }
-    this.#translate(...centerDiff(xy, this.#currentXY));
-    if (isPinch) {
-      const scaleFactor = distance(xy) / distance(this.#currentXY);
-      this.#scale(scaleFactor, xy);
-    }
-    this.#render();
-    this.#currentXY = xy;
   }
 
   #translate(dx: number, dy: number) {
@@ -146,79 +179,14 @@ export class SvgPanZoom {
   }
 
   on() {
-    // https://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript
-    if (window.matchMedia("(pointer: coarse)").matches) {
-      // if (window.PointerEvent) {
-      //   this.#container.addEventListener("pointerdown", onPointerDown); // Pointer is pressed
-      //   this.#container.addEventListener("pointerup", onPointerUp); // Releasing the pointer
-      //   this.#container.addEventListener("pointerleave", onPointerUp); // Pointer gets out of the SVG area
-      //   this.#container.addEventListener("pointermove", onPointerMove); // Pointer is moving
-      // } else {
-      this.#container.addEventListener(
-        "touchstart",
-        this.#onPointerDown.bind(this)
-      );
-      this.#container.addEventListener(
-        "touchend",
-        this.#onPointerUp.bind(this)
-      );
-      this.#container.addEventListener(
-        "touchmove",
-        this.#onPointerMove.bind(this)
-      );
-      // }
-    } else {
-      this.#container.addEventListener("wheel", (e) => {
-        // pinch gesture on touchpad or Ctrl + wheel
-        if (e.ctrlKey) {
-          e.preventDefault();
-          this.#scale(1 - e.deltaY * 0.01, this.#getXY(e));
-          this.#render();
-        }
-      });
-
-      this.#container.addEventListener(
-        "mousedown",
-        this.#onPointerDown.bind(this),
-        {
-          passive: true,
-        }
-      );
-      this.#container.addEventListener(
-        "mouseup",
-        this.#onPointerUp.bind(this),
-        {
-          passive: true,
-        }
-      );
-      this.#container.addEventListener(
-        "mouseleave",
-        this.#onPointerUp.bind(this),
-        {
-          passive: true,
-        }
-      );
-      this.#container.addEventListener(
-        "mousemove",
-        this.#onPointerMove.bind(this),
-        {
-          passive: true,
-        }
-      );
-      this.#container.addEventListener(
-        "dblclick",
-        (e) => {
-          if (e.target !== this.#container) return;
-          this.reset();
-        },
-        {
-          passive: true,
-        }
-      );
-    }
+    Object.entries(this.#listeners).forEach(([name, handler]) => {
+      this.#container.addEventListener(name, handler);
+    });
   }
 
   off() {
-    throw new Error("Not implemented");
+    Object.entries(this.#listeners).forEach(([name, handler]) => {
+      this.#container.removeEventListener(name, handler);
+    });
   }
 }
