@@ -20,19 +20,16 @@ export class SvgPanZoom {
       const xy = this.#getXY(e);
       if ("touches" in e) {
         this.#mousedown = e.touches.length === 2;
-        if (this.#mousedown) {
-          e.preventDefault();
-          // document.body.style.overflow = "none";
-        }
-        // else {
-        //   document.body.style.overflow = "auto";
-        // }
+        if (this.#mousedown) e.preventDefault();
         if (e.touches.length === 1) {
           if (this.#tapedTwice) {
-            if (distance([xy[0], this.#originXY[0]]) < 20) {
-              this.reset();
-            } else {
+            if (
+              e.target !== this.#container ||
+              distance([xy[0], this.#originXY[0]]) > 20
+            ) {
               this.#tapedTwice = false;
+            } else {
+              this.reset();
             }
           } else {
             this.#tapedTwice = true;
@@ -50,9 +47,6 @@ export class SvgPanZoom {
     const onPointerUp = (e: MouseEvent | TouchEvent) => {
       if ("touches" in e) {
         this.#mousedown = e.touches.length === 2;
-        // if (!mousedown) {
-        //   document.body.style.overflow = "auto";
-        // }
       } else {
         this.#mousedown = false;
         this.#container.style.cursor = "grab";
