@@ -6,70 +6,71 @@ export class SvgPanZoom {
   #container: HTMLElement;
   #curMatrix = identity;
   #raf = 0;
-  #tapedTwice = false;
-  #mousedown = false;
-  #originXY: Coords = [];
-  #currentXY: Coords = [];
   #listeners: Record<string, any>;
 
   constructor(element: HTMLElement | SVGSVGElement, container: HTMLElement) {
     this.#element = element;
     this.#container = container;
 
+    let tapedTwice = false;
+    let mousedown = false;
+    let originXY: Coords = [];
+    let currentXY: Coords = [];
+
     const onPointerDown = (e: MouseEvent | TouchEvent) => {
       const xy = this.#getXY(e);
       if ("touches" in e) {
-        this.#mousedown = e.touches.length === 2;
-        if (this.#mousedown) e.preventDefault();
+        mousedown = e.touches.length === 2;
+        if (mousedown) e.preventDefault();
         if (e.touches.length === 1) {
-          if (this.#tapedTwice) {
+          if (tapedTwice) {
             if (
               e.target !== this.#container ||
-              distance([xy[0], this.#originXY[0]]) > 20
+              distance([xy[0], originXY[0]]) > 20
             ) {
-              this.#tapedTwice = false;
+              tapedTwice = false;
             } else {
               this.reset();
             }
           } else {
-            this.#tapedTwice = true;
-            setTimeout(() => (this.#tapedTwice = false), 300);
+            tapedTwice = true;
+            setTimeout(() => (tapedTwice = false), 300);
           }
         }
       } else {
-        this.#mousedown = true;
+        mousedown = true;
         this.#container.style.cursor = "grabbing";
       }
-      this.#originXY = xy;
-      this.#currentXY = xy;
+      originXY = xy;
+      currentXY = xy;
     };
 
     const onPointerUp = (e: MouseEvent | TouchEvent) => {
       if ("touches" in e) {
-        this.#mousedown = e.touches.length === 2;
+        mousedown = e.touches.length === 2;
       } else {
-        this.#mousedown = false;
+        mousedown = false;
         this.#container.style.cursor = "grab";
       }
     };
 
     const onPointerMove = (e: MouseEvent | TouchEvent) => {
-      if (!this.#mousedown) return;
+      if (!mousedown) return;
       let xy = this.#getXY(e);
       let isPinch = false;
       if ("touches" in e) {
         if (e.touches.length !== 2) return;
         e.preventDefault();
-        const originScaleFactor = distance(xy) / distance(this.#originXY);
+        const originScaleFactor = distance(xy) / distance(originXY);
         isPinch = Math.abs(1 - originScaleFactor) > 0.1;
       }
-      this.#translate(...centerDiff(xy, this.#currentXY));
+      this.#translate(...centerDiff(xy, currentXY));
       if (isPinch) {
-        const scaleFactor = distance(xy) / distance(this.#currentXY);
+        const scaleFactor = distance(xy) / distance(currentXY);
         this.#scale(scaleFactor, xy);
       }
       this.#render();
-      this.#currentXY = xy;
+      currentXY = xy;
     };
 
     const onWheel = (e: WheelEvent) => {
