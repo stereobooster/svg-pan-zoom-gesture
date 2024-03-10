@@ -92,24 +92,23 @@ export class SvgPanZoom {
       e.preventDefault();
       const originScaleFactor = distance(xy) / distance(this.#originXY);
       isPinch = Math.abs(1 - originScaleFactor) > 0.1;
-      // isPinch = Math.abs(distance(xy) - distance(originXY)) > 35;
     }
+    this.#translate(...centerDiff(xy, this.#currentXY));
+    if (isPinch) {
+      const scaleFactor = distance(xy) / distance(this.#currentXY);
+      this.#scale(scaleFactor, xy);
+    }
+    this.#render();
+    this.#currentXY = xy;
+  }
 
+  #translate(dx: number, dy: number) {
     const currentScale = getScale(this.#curMatrix);
-    const [dx, dy] = centerDiff(xy, this.#currentXY);
     this.#curMatrix = translate(
       this.#curMatrix,
       dx / currentScale,
       dy / currentScale
     );
-
-    if (isPinch) {
-      const scaleFactor = distance(xy) / distance(this.#currentXY);
-      this.#scale(scaleFactor, xy);
-    }
-
-    this.#render();
-    this.#currentXY = xy;
   }
 
   #scale(scaleFactor: number, xy: Coords) {
@@ -135,12 +134,7 @@ export class SvgPanZoom {
 
   pan(dx: number, dy: number) {
     this.#animate();
-    const currentScale = getScale(this.#curMatrix);
-    this.#curMatrix = translate(
-      this.#curMatrix,
-      dx / currentScale,
-      dy / currentScale
-    );
+    this.#translate(dx, dy);
     this.#render();
   }
 
