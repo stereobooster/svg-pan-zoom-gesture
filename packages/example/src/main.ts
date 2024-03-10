@@ -120,16 +120,20 @@ class SvgPanZoom {
     );
 
     if (isPinch) {
-      const [x, y] = center(xy);
       const scaleFactor = distance(xy) / distance(this.#currentXY);
-      const scaleMatrix = scale(this.#curMatrix, scaleFactor);
-      const [nx1, ny1] = transformXY(math.inv(this.#curMatrix), x, y);
-      const [nx2, ny2] = transformXY(math.inv(scaleMatrix), x, y);
-      this.#curMatrix = translate(scaleMatrix, nx2 - nx1, ny2 - ny1);
+      this.#scale(scaleFactor, xy);
     }
 
     this.#render();
     this.#currentXY = xy;
+  }
+
+  #scale(scaleFactor: number, xy: Coords) {
+    const [x, y] = center(xy);
+    const scaleMatrix = scale(this.#curMatrix, scaleFactor);
+    const [nx1, ny1] = transformXY(math.inv(this.#curMatrix), x, y);
+    const [nx2, ny2] = transformXY(math.inv(scaleMatrix), x, y);
+    this.#curMatrix = translate(scaleMatrix, nx2 - nx1, ny2 - ny1);
   }
 
   #animate() {
@@ -158,7 +162,8 @@ class SvgPanZoom {
 
   zoom(scaleFactor: number) {
     this.#animate();
-    this.#curMatrix = scale(this.#curMatrix, scaleFactor);
+    // scale relevant to the center
+    this.#scale(scaleFactor, [[0, 0]]);
     this.#render();
   }
 
@@ -189,14 +194,7 @@ class SvgPanZoom {
         // pinch gesture on touchpad or Ctrl + wheel
         if (e.ctrlKey) {
           e.preventDefault();
-          const scaleFactor = 1 - e.deltaY * 0.01;
-
-          const [x, y] = center(this.#getXY(e));
-          const scaleMatrix = scale(this.#curMatrix, scaleFactor);
-          const [nx1, ny1] = transformXY(math.inv(this.#curMatrix), x, y);
-          const [nx2, ny2] = transformXY(math.inv(scaleMatrix), x, y);
-          this.#curMatrix = translate(scaleMatrix, nx2 - nx1, ny2 - ny1);
-
+          this.#scale(1 - e.deltaY * 0.01, this.#getXY(e));
           this.#render();
         }
       });
@@ -229,9 +227,16 @@ class SvgPanZoom {
           passive: true,
         }
       );
-      this.#container.addEventListener("dblclick", this.reset.bind(this), {
-        passive: true,
-      });
+      this.#container.addEventListener(
+        "dblclick",
+        (e) => {
+          if (e.target !== this.#container) return;
+          this.reset();
+        },
+        {
+          passive: true,
+        }
+      );
     }
   }
 
@@ -251,26 +256,40 @@ function init() {
   const instance = new SvgPanZoom(svg, svgContainer);
   instance.on();
 
-  document.querySelector("#zoomIn")?.addEventListener("click", () => {
+  document.querySelector("#zoomIn")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     instance.zoom(1.1);
   });
-  document.querySelector("#zoomOut")?.addEventListener("click", () => {
+  document.querySelector("#zoomOut")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     instance.zoom(0.9);
   });
-  document.querySelector("#reset")?.addEventListener("click", () => {
+  document.querySelector("#reset")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     instance.reset();
   });
 
-  document.querySelector("#panUp")?.addEventListener("click", () => {
+  document.querySelector("#panUp")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     instance.pan(0, -20);
   });
-  document.querySelector("#panDown")?.addEventListener("click", () => {
+  document.querySelector("#panDown")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     instance.pan(0, 20);
   });
-  document.querySelector("#panLeft")?.addEventListener("click", () => {
+  document.querySelector("#panLeft")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     instance.pan(-20, 0);
   });
-  document.querySelector("#panRight")?.addEventListener("click", () => {
+  document.querySelector("#panRight")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     instance.pan(20, 0);
   });
 }

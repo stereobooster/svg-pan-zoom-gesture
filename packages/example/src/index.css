@@ -21,6 +21,28 @@ svg {
   /* will-change: transform; */
 }
 
+/* to center: */
+/* .svgContainer svg {
+  margin: auto;
+} */
+
+.svgContainer {
+  position: relative;
+}
+
+.svgContainer .svgButtons {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  opacity: 0;
+  transition-property: opacity;
+  transition-duration: 300ms;
+}
+
+.svgContainer:hover .svgButtons {
+  opacity: 1;
+}
+
 /* debug */
 /* .svgContainer { border: 1px solid green; }
 svg { border: 1px solid red; } */
