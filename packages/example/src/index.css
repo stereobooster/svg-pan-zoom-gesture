@@ -12,6 +12,7 @@
   overflow: hidden;
   touch-action: pan-x pan-y;
   user-select: none;
+  cursor: grab;
 }
 
 svg {

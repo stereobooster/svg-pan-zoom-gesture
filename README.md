@@ -6,13 +6,12 @@ Basic idea is to add pan and zoom to SVG. For example like in Google maps or Git
 
 ## TODO
 
-- initializer (element, container)
-- instance
-  - attach event listeners
-  - detach event listeners
-  - `pan(x, y)`, `panX(x)`, `panY(y)`
-  - `scale(s, x, y)`, `scale()`
-  - `reset()`
+- what if container larger/smaller than svg
+- change `math.matrix` to `DOMMatrxi`/`DOMPoint`
+- min/max zoom
+- show/hide UI on hover/one-finger-tap
+- rubber-band on over-drag
+- spring animation
 
 ## UX
 
@@ -23,13 +22,14 @@ Basic idea is to add pan and zoom to SVG. For example like in Google maps or Git
 | scrool    | <kbd>↑</kbd>, <kbd>↓</kbd> | (3) wheel        | (5) two finger drag     | (6) one finger drag |
 | pan       | (1)                        | left clik + move | one finger click + move | two finger drag     |
 | zoom      | (2)                        | (4)              | pinch                   | pinch               |
+| reset     | (7)                        | double click     | double click            | double tap          |
 
 Options:
 
-- 1, 2, 4 - we can add buttons (like in GiiHub screenshot above)
+- 1, 2, 4, 7 - we can add buttons (like in GiiHub screenshot above)
 - 1 - focus + <kbd>↑</kbd>, <kbd>↓</kbd>, <kbd>←</kbd>, <kbd>→</kbd>
 - 2 - focus + <kbd>+</kbd>, <kbd>-</kbd>
-- 4 - right click + move
+- 4 - <kbd>Cmd</kbd> + wheel
 
 Notes:
 

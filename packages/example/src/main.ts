@@ -17,22 +17,29 @@ const identity = math.matrix([
   [0, 0, 1],
 ]);
 
-function init() {
-  const svg = document.querySelector("svg");
-  const svgContainer = document.querySelector(
-    ".svgContainer"
-  ) as HTMLDivElement;
+class SvgPanZoom {
+  #element: HTMLElement | SVGSVGElement;
+  #container: HTMLElement;
+  #curMatrix = identity;
+  #raf = 0;
+  #tapedTwice = false;
+  #mousedown = false;
+  #originXY: Coords = [];
+  #currentXY: Coords = [];
 
-  if (!svg || !svgContainer) return;
+  constructor(element: HTMLElement | SVGSVGElement, container: HTMLElement) {
+    this.#element = element;
+    this.#container = container;
+  }
 
-  function getXY(e: MouseEvent | TouchEvent, layer = true) {
+  #getXY(e: MouseEvent | TouchEvent, layer = true) {
     let coords: Coords =
       "touches" in e
         ? Array.from(e.touches).map((t) => [t.clientX, t.clientY])
         : [[e.clientX, e.clientY]];
 
     if (layer) {
-      const rect = svgContainer.getBoundingClientRect();
+      const rect = this.#container.getBoundingClientRect();
       coords = coords.map(([x, y]) => [
         x - rect.x - rect.width / 2,
         y - rect.y - rect.height / 2,
@@ -42,26 +49,18 @@ function init() {
     return coords;
   }
 
-  let current = identity;
-
-  let raf: number;
-  function render() {
-    cancelAnimationFrame(raf);
-    raf = window.requestAnimationFrame(() => {
-      svg!.style.transform = ttm(current);
+  #render() {
+    cancelAnimationFrame(this.#raf);
+    this.#raf = window.requestAnimationFrame(() => {
+      this.#element.style.transform = ttm(this.#curMatrix);
     });
   }
 
-  let tapedTwice = false;
-  let mousedown = false;
-  let originXY: Coords;
-  let currentXY: Coords;
-
-  function onPointerDown(e: MouseEvent | TouchEvent) {
-    const xy = getXY(e);
+  #onPointerDown(e: MouseEvent | TouchEvent) {
+    const xy = this.#getXY(e);
     if ("touches" in e) {
-      mousedown = e.touches.length === 2;
-      if (mousedown) {
+      this.#mousedown = e.touches.length === 2;
+      if (this.#mousedown) {
         e.preventDefault();
         // document.body.style.overflow = "none";
       }
@@ -69,115 +68,211 @@ function init() {
       //   document.body.style.overflow = "auto";
       // }
       if (e.touches.length === 1) {
-        if (tapedTwice) {
-          if (distance([xy[0], originXY[0]]) < 20) {
-            onPointerDbl();
+        if (this.#tapedTwice) {
+          if (distance([xy[0], this.#originXY[0]]) < 20) {
+            this.reset();
           } else {
-            tapedTwice = false;
+            this.#tapedTwice = false;
           }
         } else {
-          tapedTwice = true;
-          setTimeout(() => (tapedTwice = false), 300);
+          this.#tapedTwice = true;
+          setTimeout(() => (this.#tapedTwice = false), 300);
         }
       }
     } else {
-      mousedown = true;
+      this.#mousedown = true;
+      this.#container.style.cursor = "grabbing";
     }
-    originXY = xy;
-    currentXY = originXY;
+    this.#originXY = xy;
+    this.#currentXY = xy;
   }
 
-  function onPointerUp(e: MouseEvent | TouchEvent) {
+  #onPointerUp(e: MouseEvent | TouchEvent) {
     if ("touches" in e) {
-      mousedown = e.touches.length === 2;
+      this.#mousedown = e.touches.length === 2;
       // if (!mousedown) {
       //   document.body.style.overflow = "auto";
       // }
     } else {
-      mousedown = false;
+      this.#mousedown = false;
+      this.#container.style.cursor = "grab";
     }
   }
 
-  function onPointerMove(e: MouseEvent | TouchEvent) {
-    if (!mousedown) return;
-    let xy = getXY(e);
+  #onPointerMove(e: MouseEvent | TouchEvent) {
+    if (!this.#mousedown) return;
+    let xy = this.#getXY(e);
     let isPinch = false;
     if ("touches" in e) {
       if (e.touches.length !== 2) return;
       e.preventDefault();
-      const originScaleFactor = distance(xy) / distance(originXY);
+      const originScaleFactor = distance(xy) / distance(this.#originXY);
       isPinch = Math.abs(1 - originScaleFactor) > 0.1;
       // isPinch = Math.abs(distance(xy) - distance(originXY)) > 35;
     }
 
-    const currentScale = current.get([0, 0]);
-    const [dx, dy] = centerDiff(xy, currentXY);
-    current = translate(current, dx / currentScale, dy / currentScale);
+    const currentScale = this.#curMatrix.get([0, 0]);
+    const [dx, dy] = centerDiff(xy, this.#currentXY);
+    this.#curMatrix = translate(
+      this.#curMatrix,
+      dx / currentScale,
+      dy / currentScale
+    );
 
     if (isPinch) {
       const [x, y] = center(xy);
-      const scaleFactor = distance(xy) / distance(currentXY);
-      const scaleMatrix = scale(current, scaleFactor);
-      const [nx1, ny1] = transformXY(math.inv(current), x, y);
+      const scaleFactor = distance(xy) / distance(this.#currentXY);
+      const scaleMatrix = scale(this.#curMatrix, scaleFactor);
+      const [nx1, ny1] = transformXY(math.inv(this.#curMatrix), x, y);
       const [nx2, ny2] = transformXY(math.inv(scaleMatrix), x, y);
-      current = translate(scaleMatrix, nx2 - nx1, ny2 - ny1);
+      this.#curMatrix = translate(scaleMatrix, nx2 - nx1, ny2 - ny1);
     }
 
-    render();
-    currentXY = xy;
+    this.#render();
+    this.#currentXY = xy;
   }
 
-  function onPointerDbl() {
-    current = identity;
-    render();
-    // animation
+  #animate() {
     const t = 300;
-    svg!.style.transitionProperty = "transform";
-    svg!.style.transitionDuration = `${t}ms`;
-    setTimeout(() => (svg!.style.transitionDuration = "0ms"), t);
+    this.#element.style.transitionProperty = "transform";
+    this.#element.style.transitionDuration = `${t}ms`;
+    setTimeout(() => (this.#element.style.transitionDuration = "0ms"), t);
   }
 
-  // https://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript
-  if (window.matchMedia("(pointer: coarse)").matches) {
-    // if (window.PointerEvent) {
-    //   svgContainer.addEventListener("pointerdown", onPointerDown); // Pointer is pressed
-    //   svgContainer.addEventListener("pointerup", onPointerUp); // Releasing the pointer
-    //   svgContainer.addEventListener("pointerleave", onPointerUp); // Pointer gets out of the SVG area
-    //   svgContainer.addEventListener("pointermove", onPointerMove); // Pointer is moving
-    // } else {
-    svgContainer.addEventListener("touchstart", onPointerDown);
-    svgContainer.addEventListener("touchend", onPointerUp);
-    svgContainer.addEventListener("touchmove", onPointerMove);
-    // }
-  } else {
-    svgContainer.addEventListener("wheel", (e) => {
-      // pinch gesture on touchpad or Ctrl + wheel
-      if (e.ctrlKey) {
-        e.preventDefault();
-        const scaleFactor = 1 - e.deltaY * 0.01;
-
-        const [x, y] = center(getXY(e));
-        const scaleMatrix = scale(current, scaleFactor);
-        const [nx1, ny1] = transformXY(math.inv(current), x, y);
-        const [nx2, ny2] = transformXY(math.inv(scaleMatrix), x, y);
-        current = translate(scaleMatrix, nx2 - nx1, ny2 - ny1);
-
-        render();
-      }
-    });
-
-    svgContainer.addEventListener("mousedown", onPointerDown, {
-      passive: true,
-    });
-    svgContainer.addEventListener("mouseup", onPointerUp, { passive: true });
-    svgContainer.addEventListener("mouseleave", onPointerUp, { passive: true });
-    svgContainer.addEventListener("mousemove", onPointerMove, {
-      passive: true,
-    });
-    svgContainer.addEventListener("dblclick", onPointerDbl, {
-      passive: true,
-    });
+  reset() {
+    this.#animate();
+    this.#curMatrix = identity;
+    this.#render();
   }
+
+  pan(dx: number, dy: number) {
+    this.#animate();
+    const currentScale = this.#curMatrix.get([0, 0]);
+    this.#curMatrix = translate(
+      this.#curMatrix,
+      dx / currentScale,
+      dy / currentScale
+    );
+    this.#render();
+  }
+
+  zoom(scaleFactor: number) {
+    this.#animate();
+    this.#curMatrix = scale(this.#curMatrix, scaleFactor);
+    this.#render();
+  }
+
+  on() {
+    // https://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript
+    if (window.matchMedia("(pointer: coarse)").matches) {
+      // if (window.PointerEvent) {
+      //   this.#container.addEventListener("pointerdown", onPointerDown); // Pointer is pressed
+      //   this.#container.addEventListener("pointerup", onPointerUp); // Releasing the pointer
+      //   this.#container.addEventListener("pointerleave", onPointerUp); // Pointer gets out of the SVG area
+      //   this.#container.addEventListener("pointermove", onPointerMove); // Pointer is moving
+      // } else {
+      this.#container.addEventListener(
+        "touchstart",
+        this.#onPointerDown.bind(this)
+      );
+      this.#container.addEventListener(
+        "touchend",
+        this.#onPointerUp.bind(this)
+      );
+      this.#container.addEventListener(
+        "touchmove",
+        this.#onPointerMove.bind(this)
+      );
+      // }
+    } else {
+      this.#container.addEventListener("wheel", (e) => {
+        // pinch gesture on touchpad or Ctrl + wheel
+        if (e.ctrlKey) {
+          e.preventDefault();
+          const scaleFactor = 1 - e.deltaY * 0.01;
+
+          const [x, y] = center(this.#getXY(e));
+          const scaleMatrix = scale(this.#curMatrix, scaleFactor);
+          const [nx1, ny1] = transformXY(math.inv(this.#curMatrix), x, y);
+          const [nx2, ny2] = transformXY(math.inv(scaleMatrix), x, y);
+          this.#curMatrix = translate(scaleMatrix, nx2 - nx1, ny2 - ny1);
+
+          this.#render();
+        }
+      });
+
+      this.#container.addEventListener(
+        "mousedown",
+        this.#onPointerDown.bind(this),
+        {
+          passive: true,
+        }
+      );
+      this.#container.addEventListener(
+        "mouseup",
+        this.#onPointerUp.bind(this),
+        {
+          passive: true,
+        }
+      );
+      this.#container.addEventListener(
+        "mouseleave",
+        this.#onPointerUp.bind(this),
+        {
+          passive: true,
+        }
+      );
+      this.#container.addEventListener(
+        "mousemove",
+        this.#onPointerMove.bind(this),
+        {
+          passive: true,
+        }
+      );
+      this.#container.addEventListener("dblclick", this.reset.bind(this), {
+        passive: true,
+      });
+    }
+  }
+
+  off() {
+    throw new Error("Not implemented");
+  }
+}
+
+function init() {
+  const svg = document.querySelector("svg");
+  const svgContainer = document.querySelector(
+    ".svgContainer"
+  ) as HTMLDivElement;
+
+  if (!svg || !svgContainer) return;
+
+  const instance = new SvgPanZoom(svg, svgContainer);
+  instance.on();
+
+  document.querySelector("#zoomIn")?.addEventListener("click", () => {
+    instance.zoom(1.1);
+  });
+  document.querySelector("#zoomOut")?.addEventListener("click", () => {
+    instance.zoom(0.9);
+  });
+  document.querySelector("#reset")?.addEventListener("click", () => {
+    instance.reset();
+  });
+
+  document.querySelector("#panUp")?.addEventListener("click", () => {
+    instance.pan(0, -20);
+  });
+  document.querySelector("#panDown")?.addEventListener("click", () => {
+    instance.pan(0, 20);
+  });
+  document.querySelector("#panLeft")?.addEventListener("click", () => {
+    instance.pan(-20, 0);
+  });
+  document.querySelector("#panRight")?.addEventListener("click", () => {
+    instance.pan(20, 0);
+  });
 }
 
 init();
