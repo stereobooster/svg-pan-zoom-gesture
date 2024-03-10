@@ -11,6 +11,12 @@ import {
   ttm,
 } from "./utils";
 
+const identity = math.matrix([
+  [1, 0, 0],
+  [0, 1, 0],
+  [0, 0, 1],
+]);
+
 function init() {
   const svg = document.querySelector("svg");
   const svgContainer = document.querySelector(
@@ -36,11 +42,7 @@ function init() {
     return coords;
   }
 
-  let current = math.matrix([
-    [1, 0, 0],
-    [0, 1, 0],
-    [0, 0, 1],
-  ]);
+  let current = identity;
 
   let raf: number;
   function render() {
@@ -50,11 +52,13 @@ function init() {
     });
   }
 
+  let tapedTwice = false;
   let mousedown = false;
   let originXY: Coords;
   let currentXY: Coords;
 
   function onPointerDown(e: MouseEvent | TouchEvent) {
+    const xy = getXY(e);
     if ("touches" in e) {
       mousedown = e.touches.length === 2;
       if (mousedown) {
@@ -64,10 +68,22 @@ function init() {
       // else {
       //   document.body.style.overflow = "auto";
       // }
+      if (e.touches.length === 1) {
+        if (tapedTwice) {
+          if (distance([xy[0], originXY[0]]) < 20) {
+            onPointerDbl();
+          } else {
+            tapedTwice = false;
+          }
+        } else {
+          tapedTwice = true;
+          setTimeout(() => (tapedTwice = false), 300);
+        }
+      }
     } else {
       mousedown = true;
     }
-    originXY = getXY(e);
+    originXY = xy;
     currentXY = originXY;
   }
 
@@ -111,6 +127,16 @@ function init() {
     currentXY = xy;
   }
 
+  function onPointerDbl() {
+    current = identity;
+    render();
+    // animation
+    const t = 300;
+    svg!.style.transitionProperty = "transform";
+    svg!.style.transitionDuration = `${t}ms`;
+    setTimeout(() => (svg!.style.transitionDuration = "0ms"), t);
+  }
+
   // https://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript
   if (window.matchMedia("(pointer: coarse)").matches) {
     // if (window.PointerEvent) {
@@ -146,6 +172,9 @@ function init() {
     svgContainer.addEventListener("mouseup", onPointerUp, { passive: true });
     svgContainer.addEventListener("mouseleave", onPointerUp, { passive: true });
     svgContainer.addEventListener("mousemove", onPointerMove, {
+      passive: true,
+    });
+    svgContainer.addEventListener("dblclick", onPointerDbl, {
       passive: true,
     });
   }

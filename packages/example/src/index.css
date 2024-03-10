@@ -15,8 +15,9 @@
 }
 
 svg {
-  will-change: transform;
   pointer-events: none;
+  /* this causes pixelation in Safari */
+  /* will-change: transform; */
 }
 
 /* debug */

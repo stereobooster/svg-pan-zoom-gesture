@@ -2,6 +2,16 @@ import * as math from "mathjs";
 
 export type Coords = Array<[number, number]>;
 
+// this causes pixelation in Safari
+// export function ttm(m: math.Matrix) {
+//   return `matrix3d(${[
+//     [m.get([0, 0]), m.get([1, 0]), 0, 0],
+//     [m.get([0, 1]), m.get([1, 1]), 0, 0],
+//     [0, 0, 1, 0],
+//     [m.get([0, 2]), m.get([1, 2]), 0, 1],
+//   ]})`;
+// }
+
 export function ttm(m: math.Matrix) {
   return `matrix(${[
     m.get([0, 0]),
@@ -80,3 +90,12 @@ export function tdm(m: math.Matrix) {
     m.get([1, 2]),
   ]);
 }
+
+// export function m3d(m: DOMMatrix) {
+//   return `matrix3d(${[
+//     [m.m11, m.m12, m.m13, m.m14],
+//     [m.m21, m.m22, m.m23, m.m24],
+//     [m.m31, m.m32, m.m33, m.m34],
+//     [m.m41, m.m42, m.m43, m.m44],
+//   ]})`;
+// }

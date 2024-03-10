@@ -4,6 +4,16 @@ Basic idea is to add pan and zoom to SVG. For example like in Google maps or Git
 
 ![](./notes/github-mermaid.png)
 
+## TODO
+
+- initializer (element, container)
+- instance
+  - attach event listeners
+  - detach event listeners
+  - `pan(x, y)`, `panX(x)`, `panY(y)`
+  - `scale(s, x, y)`, `scale()`
+  - `reset()`
+
 ## UX
 
 ### Interaction
