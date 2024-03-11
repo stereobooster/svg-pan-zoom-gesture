@@ -12,27 +12,39 @@ function init() {
   const instance = new SvgPanZoom(svg, svgContainer);
   instance.on();
 
+  const classes = {
+    zoomIn: "zoom-in",
+    reset: "reset",
+    zoomOut: "zoom-out",
+    buttons: "buttons",
+  };
+
   const buttons = document.createElement("div");
   buttons.innerHTML = `
-    <button class="zoom-in" tabindex="-1">+</button>
-    <button class="reset" tabindex="-1">↺</button>
-    <button class="zoom-out" tabindex="-1">-</button>
+    <button class="${classes.zoomIn}" tabindex="-1">+</button>
+    <button class="${classes.reset}" tabindex="-1">↺</button>
+    <button class="${classes.zoomOut}" tabindex="-1">-</button>
   `;
-  buttons.className = "buttons";
-  svgContainer.append(buttons);
+  buttons.className = classes.buttons;
+  buttons.querySelectorAll("button").forEach((button, i) => {
+    if (i == 0)
+      button.addEventListener("click", (e) => {
+        e.stopPropagation();
+        instance.zoom(1.1);
+      });
+    if (i == 1)
+      button.addEventListener("click", (e) => {
+        e.stopPropagation();
+        instance.reset();
+      });
+    if (i == 2)
+      button.addEventListener("click", (e) => {
+        e.stopPropagation();
+        instance.zoom(0.9);
+      });
+  });
 
-  svgContainer.querySelector(".zoom-in")?.addEventListener("click", (e) => {
-    e.stopPropagation();
-    instance.zoom(1.1);
-  });
-  svgContainer.querySelector(".zoom-out")?.addEventListener("click", (e) => {
-    e.stopPropagation();
-    instance.zoom(0.9);
-  });
-  svgContainer.querySelector(".reset")?.addEventListener("click", (e) => {
-    e.stopPropagation();
-    instance.reset();
-  });
+  svgContainer.append(buttons);
 }
 
 init();
