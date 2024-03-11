@@ -8,6 +8,7 @@
   }
 }
 
+/* core */
 .svgContainer {
   overflow: hidden;
   touch-action: pan-x pan-y;
@@ -26,19 +27,7 @@ svg {
   margin: auto;
 } */
 
-.svgButtons {
-  @apply inline-flex;
-}
-.svgButtons .zoomIn {
-  @apply bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l;
-}
-.svgButtons .reset {
-  @apply bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4;
-}
-.svgButtons .zoomOut {
-  @apply bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r;
-}
-
+/* UI */
 .svgContainer {
   position: relative;
 }
@@ -56,10 +45,6 @@ svg {
   opacity: 1;
 }
 
-.svgButtons:focus-within {
-  opacity: 1;
-}
-
 @media (hover: none) {
   .svgButtons {
     display: none;
@@ -67,11 +52,20 @@ svg {
 
   .svgContainer:hover .svgButtons {
     opacity: 0;
-  }
-  
-  .svgButtons:focus-within {
-    opacity: 0;
-  }  
+  } 
+}
+
+.svgButtons {
+  @apply inline-flex;
+}
+.svgButtons .zoomIn {
+  @apply bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l;
+}
+.svgButtons .reset {
+  @apply bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4;
+}
+.svgButtons .zoomOut {
+  @apply bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r;
 }
 
 /* debug */

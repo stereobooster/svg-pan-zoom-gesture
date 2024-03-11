@@ -74,7 +74,7 @@ export class SvgPanZoom {
     };
 
     const onWheel = (e: WheelEvent) => {
-      // pinch gesture on touchpad or Ctrl + wheel
+      // pinch gesture on trackpad/touchpad or Ctrl + wheel
       if (e.ctrlKey) {
         e.preventDefault();
         this.#scale(1 - e.deltaY * 0.01, this.#getXY(e));

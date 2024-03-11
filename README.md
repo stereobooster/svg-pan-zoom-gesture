@@ -8,14 +8,22 @@ Basic idea is to add pan and zoom to SVG. For example like in Google maps or Git
 
 - SvgPanZoomUI
   - show/hide UI on hover/one-finger-tap
+  - `svg-pan-zoom` root class
+- demo
+  - with UI/ without UI
+  - svg inline / img
+  - no size / bigger / smaller
+  - lorem ipsum
+  - publish on netlify
 - publish package
-- what if container larger/smaller than svg
+  - readme with example usage and basic CSS
+- HTML custom element
 
 ## UX
 
 ### Interaction
 
-| intention | keyboard                   | mouse            | trackpad                | touchscren          |
+| intention | keyboard                   | mouse            | trackpad/touchpad       | touchscren          |
 | --------- | -------------------------- | ---------------- | ----------------------- | ------------------- |
 | scrool    | <kbd>↑</kbd>, <kbd>↓</kbd> | (3) wheel        | (5) two finger drag     | (6) one finger drag |
 | pan       | (1)                        | left clik + move | one finger click + move | two finger drag     |
@@ -35,12 +43,10 @@ Notes:
 - 3, 5 - I don't want to use wheel (mouse) or two finger drag (trackpad) for zoom to avoid problem with scroll trap.
 - 6 - I don't want to use one finger drag (touchscreen) for pan. Instead, when people would use one finger drag over SVG, it would show overlay which instructs people to use two fingers
 
-### Features
+### Missing features
 
 - core
   - overlay (see above point 6)
-- UI (buttons)
-  - full-screen
 - other
   - max, min zoom
   - fit, resize, crop, center
@@ -49,6 +55,7 @@ Notes:
   - zoom to object
   - rubber-band on over-drag
   - spring animations
+  - full-screen
 
 ## Implementation
 
