@@ -8,7 +8,8 @@
   }
 }
 
-/* core */
+/* Core */
+
 .svg-pan-zoom {
   overflow: hidden;
   touch-action: pan-x pan-y;
@@ -16,16 +17,17 @@
   cursor: grab;
 }
 
-svg {
+.svg-pan-zoom svg,
+.svg-pan-zoom img {
   pointer-events: none;
   /* this causes pixelation in Safari */
   /* will-change: transform; */
-}
-
-/* to center: */
-/* .svg-pan-zoom svg {
+  /* need to center smaller images or fix bug in zoom functionality */
   margin: auto;
-} */
+  /* need to fit bigger images */
+  max-width: 100%;
+  height: auto;
+}
 
 /* UI */
 
