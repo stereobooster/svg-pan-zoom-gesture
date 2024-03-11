@@ -10,8 +10,6 @@ Basic idea is to add pan and zoom to SVG. For example like in Google maps or Git
   - publish on netlify
 - publish package
   - readme with example usage and basic CSS
-- junk on scroll
-- HTML custom element
 
 ## UX
 
@@ -50,6 +48,7 @@ Notes:
   - rubber-band on over-drag
   - spring animations
   - full-screen
+- HTML custom element
 
 ## Implementation
 

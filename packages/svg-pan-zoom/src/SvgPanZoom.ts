@@ -119,6 +119,7 @@ export class SvgPanZoom {
       touchstart: onPointerDown,
       touchend: onPointerUp,
       touchmove: onPointerMove,
+      touchcancel: onPointerUp,
       wheel: onWheel,
       mousedown: onPointerDown,
       mouseup: onPointerUp,
@@ -207,6 +208,10 @@ export class SvgPanZoom {
 
   on() {
     Object.entries(this.#listeners).forEach(([name, handler]) => {
+      // I can add `{ passive: true }`, which would remove junk during scroll, but it will break zoom
+      // Maybe I can lock scroll? But I need to know closest scrollable parent?
+      // Maybe I can change listeners on the fly as soon as the first zoom detected?
+      // Maybe I can scroll back?
       this.#container.addEventListener(name, handler);
     });
   }
