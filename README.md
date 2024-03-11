@@ -8,10 +8,8 @@ Basic idea is to add pan and zoom to SVG. For example like in Google maps or Git
 
 ## TODO
 
-- demo
-  - publish on netlify
+- readme with example usage and basic CSS
 - publish package
-  - readme with example usage and basic CSS
 
 ## UX
 
