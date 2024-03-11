@@ -1,5 +1,7 @@
 # svg-pan-zoom
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/4bdb3997-ed5f-4506-bb77-95595d2e6562/deploy-status)](https://app.netlify.com/sites/svg-pan-zoom/deploys)
+
 Basic idea is to add pan and zoom to SVG. For example like in Google maps or GitHub:
 
 ![](./notes/github-mermaid.png)
