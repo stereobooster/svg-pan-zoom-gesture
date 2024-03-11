@@ -6,9 +6,6 @@ Basic idea is to add pan and zoom to SVG. For example like in Google maps or Git
 
 ## TODO
 
-- SvgPanZoomUI
-  - create class
-  - touchscreen warning flickers sometimes
 - demo
   - with UI/ without UI
   - svg inline / img

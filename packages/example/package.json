@@ -12,8 +12,7 @@
     "@stereobooster/svg-pan-zoom": "workspace:*",
     "@types/animejs": "^3.1.12",
     "@use-gesture/vanilla": "^10.3.0",
-    "animejs": "^3.2.2",
-    "mathjs": "^12.4.0"
+    "animejs": "^3.2.2"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",

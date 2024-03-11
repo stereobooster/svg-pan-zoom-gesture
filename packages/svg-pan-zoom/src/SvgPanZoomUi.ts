@@ -1,7 +1,6 @@
-import { SvgPanZoom } from "./SvgPanZoom";
+import { SvgPanZoom, SvgPanZoomProps } from "./SvgPanZoom.js";
 
-// TODO: pass as config to class
-const classes = {
+const defaultClasses = {
   zoomIn: "zoom-in",
   reset: "reset",
   zoomOut: "zoom-out",
@@ -10,11 +9,30 @@ const classes = {
   tsWarningActive: "active",
 };
 
+const defaultMessage = "Use two fingers to pan and zoom";
+
+export type SvgPanZoomUiProps = SvgPanZoomProps & {
+  classes?: typeof defaultClasses;
+  /**
+   * @default "Use two fingers to pan and zoom"
+   */
+  message?: string;
+};
+
 export class SvgPanZoomUi {
-  constructor(element: HTMLElement | SVGSVGElement, container: HTMLElement) {
-    const instance = new SvgPanZoom(element, container);
-    // TODO: implement on/off functionality
-    instance.on();
+  #buttons: HTMLElement;
+  #warning: HTMLElement;
+  #instance: SvgPanZoom;
+  #container: HTMLElement;
+
+  constructor({
+    container,
+    classes = defaultClasses,
+    message = defaultMessage,
+    ...rest
+  }: SvgPanZoomUiProps) {
+    this.#container = container;
+    this.#instance = new SvgPanZoom({ container, ...rest });
 
     const buttons = document.createElement("div");
     buttons.innerHTML = `
@@ -27,34 +45,42 @@ export class SvgPanZoomUi {
       if (i == 0)
         button.addEventListener("click", (e) => {
           e.stopPropagation();
-          instance.zoom(1.1);
+          this.#instance.zoom(1.1);
         });
       if (i == 1)
         button.addEventListener("click", (e) => {
           e.stopPropagation();
-          instance.reset();
+          this.#instance.reset();
         });
       if (i == 2)
         button.addEventListener("click", (e) => {
           e.stopPropagation();
-          instance.zoom(0.9);
+          this.#instance.zoom(0.9);
         });
     });
-    container.append(buttons);
+    this.#buttons = buttons;
 
     const warning = document.createElement("div");
-    // TODO: pass as config
-    warning.innerText = "Use two fingers to pan and zoom";
+
+    warning.innerText = message;
     warning.className = classes.tsWarning;
-    container.append(warning);
-    instance.onOneFingerDrag((flag) =>
+    this.#instance.onOneFingerDrag((flag) =>
       flag
         ? warning.classList.add(classes.tsWarningActive)
         : warning.classList.remove(classes.tsWarningActive)
     );
+    this.#warning = warning;
   }
 
-  on() {}
+  on() {
+    this.#instance.on();
+    this.#container.append(this.#warning);
+    this.#container.append(this.#buttons);
+  }
 
-  off() {}
+  off() {
+    this.#instance.off();
+    this.#warning.remove();
+    this.#buttons.remove();
+  }
 }

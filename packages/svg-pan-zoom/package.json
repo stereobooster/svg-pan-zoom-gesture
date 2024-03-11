@@ -31,6 +31,8 @@
     "clean": "rm -rf dist",
     "tsc": "tsc"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "mathjs": "^12.4.0"
+  },
   "dependencies": {}
 }

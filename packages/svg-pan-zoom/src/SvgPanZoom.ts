@@ -1,5 +1,13 @@
-import { getScale, identity, scaleAt, translate, ttm } from "./utilsDom";
-import { Coords, center, centerDiff, distance } from "./utils";
+import { getScale, identity, scaleAt, translate, ttm } from "./utilsDom.js";
+import { Coords, center, centerDiff, distance } from "./utils.js";
+
+export type SvgPanZoomProps = {
+  /**
+   * svg or img
+   */
+  element: HTMLElement | SVGSVGElement;
+  container: HTMLElement;
+};
 
 export class SvgPanZoom {
   #element: HTMLElement | SVGSVGElement;
@@ -10,7 +18,7 @@ export class SvgPanZoom {
   #oneFinger: boolean = false;
   #oneFingerCb?: (flag: boolean) => void;
 
-  constructor(element: HTMLElement | SVGSVGElement, container: HTMLElement) {
+  constructor({ element, container }: SvgPanZoomProps) {
     this.#element = element;
     this.#container = container;
 

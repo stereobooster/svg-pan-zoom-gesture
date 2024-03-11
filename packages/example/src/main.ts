@@ -1,15 +1,12 @@
 import "./index.css";
-import { SvgPanZoomUi } from "./SvgPanZoomUi";
+import { SvgPanZoomUi } from "@stereobooster/svg-pan-zoom";
 
 function init() {
-  const svgContainer = document.querySelector(
-    ".svg-pan-zoom"
-  ) as HTMLDivElement;
-  const svg = svgContainer.querySelector("svg");
-
-  if (!svg || !svgContainer) return;
-
-  new SvgPanZoomUi(svg, svgContainer);
+  const container = document.querySelector(".svg-pan-zoom") as HTMLDivElement;
+  const element = container.querySelector("svg");
+  if (!element || !container) return;
+  const i = new SvgPanZoomUi({ element, container });
+  i.on();
 }
 
 init();
