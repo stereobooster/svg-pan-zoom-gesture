@@ -12,41 +12,26 @@ function init() {
   const instance = new SvgPanZoom(svg, svgContainer);
   instance.on();
 
-  document.querySelector("#zoomIn")?.addEventListener("click", (e) => {
-    e.preventDefault();
+  const buttons = document.createElement("div");
+  buttons.innerHTML = `
+    <button class="zoomIn" tabindex="-1">+</button>
+    <button class="reset" tabindex="-1">•</button>
+    <button class="zoomOut" tabindex="-1">-</button>
+  `;
+  buttons.className = "svgButtons";
+  svgContainer.append(buttons);
+
+  svgContainer.querySelector(".zoomIn")?.addEventListener("click", (e) => {
     e.stopPropagation();
     instance.zoom(1.1);
   });
-  document.querySelector("#zoomOut")?.addEventListener("click", (e) => {
-    e.preventDefault();
+  svgContainer.querySelector(".zoomOut")?.addEventListener("click", (e) => {
     e.stopPropagation();
     instance.zoom(0.9);
   });
-  document.querySelector("#reset")?.addEventListener("click", (e) => {
-    e.preventDefault();
+  svgContainer.querySelector(".reset")?.addEventListener("click", (e) => {
     e.stopPropagation();
     instance.reset();
-  });
-
-  document.querySelector("#panUp")?.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    instance.pan(0, -20);
-  });
-  document.querySelector("#panDown")?.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    instance.pan(0, 20);
-  });
-  document.querySelector("#panLeft")?.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    instance.pan(-20, 0);
-  });
-  document.querySelector("#panRight")?.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    instance.pan(20, 0);
   });
 }
 

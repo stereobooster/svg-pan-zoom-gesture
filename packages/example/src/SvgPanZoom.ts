@@ -87,23 +87,17 @@ export class SvgPanZoom {
       this.reset();
     };
 
-    // https://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript
-    if (window.matchMedia("(pointer: coarse)").matches) {
-      this.#listeners = {
-        touchstart: onPointerDown,
-        touchend: onPointerUp,
-        touchmove: onPointerMove,
-      };
-    } else {
-      this.#listeners = {
-        wheel: onWheel,
-        mousedown: onPointerDown,
-        mouseup: onPointerUp,
-        mouseleave: onPointerUp,
-        mousemove: onPointerMove,
-        dblclick: onDblClick,
-      };
-    }
+    this.#listeners = {
+      touchstart: onPointerDown,
+      touchend: onPointerUp,
+      touchmove: onPointerMove,
+      wheel: onWheel,
+      mousedown: onPointerDown,
+      mouseup: onPointerUp,
+      mouseleave: onPointerUp,
+      mousemove: onPointerMove,
+      dblclick: onDblClick,
+    };
   }
 
   #getXY(e: MouseEvent | TouchEvent, layer = true) {

@@ -6,11 +6,10 @@ Basic idea is to add pan and zoom to SVG. For example like in Google maps or Git
 
 ## TODO
 
+- SvgPanZoomUI
+  - show/hide UI on hover/one-finger-tap
+- publish package
 - what if container larger/smaller than svg
-- min/max zoom
-- show/hide UI on hover/one-finger-tap
-- rubber-band on over-drag
-- spring animation
 
 ## UX
 
@@ -29,23 +28,18 @@ Options:
 - 1 - focus + <kbd>↑</kbd>, <kbd>↓</kbd>, <kbd>←</kbd>, <kbd>→</kbd>
 - 2 - focus + <kbd>+</kbd>, <kbd>-</kbd>
 - 4 - <kbd>Cmd</kbd> + wheel
+- 7 - <kbd>Esc</kbd>
 
 Notes:
 
-- 3, 5 - I don't want to use wheel (mouse) or two finger drag (trackpad) for zoom to avoid problem woth scroll trap.
+- 3, 5 - I don't want to use wheel (mouse) or two finger drag (trackpad) for zoom to avoid problem with scroll trap.
 - 6 - I don't want to use one finger drag (touchscreen) for pan. Instead, when people would use one finger drag over SVG, it would show overlay which instructs people to use two fingers
 
 ### Features
 
 - core
-  - programmatic zoom, pan
-  - interaction for zoom (without buttons)
-  - interaction for pan (without buttons)
   - overlay (see above point 6)
 - UI (buttons)
-  - zoom
-  - pan
-  - reset
   - full-screen
 - other
   - max, min zoom
@@ -53,6 +47,8 @@ Notes:
 - fancy
   - minimap
   - zoom to object
+  - rubber-band on over-drag
+  - spring animations
 
 ## Implementation
 

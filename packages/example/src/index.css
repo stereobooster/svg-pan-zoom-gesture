@@ -26,11 +26,24 @@ svg {
   margin: auto;
 } */
 
+.svgButtons {
+  @apply inline-flex;
+}
+.svgButtons .zoomIn {
+  @apply bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l;
+}
+.svgButtons .reset {
+  @apply bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4;
+}
+.svgButtons .zoomOut {
+  @apply bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r;
+}
+
 .svgContainer {
   position: relative;
 }
 
-.svgContainer .svgButtons {
+.svgButtons {
   position: absolute;
   right: 1rem;
   bottom: 1rem;
@@ -45,6 +58,20 @@ svg {
 
 .svgButtons:focus-within {
   opacity: 1;
+}
+
+@media (hover: none) {
+  .svgButtons {
+    display: none;
+  }
+
+  .svgContainer:hover .svgButtons {
+    opacity: 0;
+  }
+  
+  .svgButtons:focus-within {
+    opacity: 0;
+  }  
 }
 
 /* debug */
