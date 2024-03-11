@@ -8,7 +8,6 @@ Basic idea is to add pan and zoom to SVG. For example like in Google maps or Git
 
 - SvgPanZoomUI
   - show/hide UI on hover/one-finger-tap
-  - `svg-pan-zoom` root class
 - demo
   - with UI/ without UI
   - svg inline / img

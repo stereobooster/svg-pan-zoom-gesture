@@ -2,10 +2,10 @@ import "./index.css";
 import { SvgPanZoom } from "./SvgPanZoom";
 
 function init() {
-  const svg = document.querySelector("svg");
   const svgContainer = document.querySelector(
-    ".svgContainer"
+    ".svg-pan-zoom"
   ) as HTMLDivElement;
+  const svg = svgContainer.querySelector("svg");
 
   if (!svg || !svgContainer) return;
 
@@ -14,18 +14,18 @@ function init() {
 
   const buttons = document.createElement("div");
   buttons.innerHTML = `
-    <button class="zoomIn" tabindex="-1">+</button>
+    <button class="zoom-in" tabindex="-1">+</button>
     <button class="reset" tabindex="-1">↺</button>
-    <button class="zoomOut" tabindex="-1">-</button>
+    <button class="zoom-out" tabindex="-1">-</button>
   `;
-  buttons.className = "svgButtons";
+  buttons.className = "buttons";
   svgContainer.append(buttons);
 
-  svgContainer.querySelector(".zoomIn")?.addEventListener("click", (e) => {
+  svgContainer.querySelector(".zoom-in")?.addEventListener("click", (e) => {
     e.stopPropagation();
     instance.zoom(1.1);
   });
-  svgContainer.querySelector(".zoomOut")?.addEventListener("click", (e) => {
+  svgContainer.querySelector(".zoom-out")?.addEventListener("click", (e) => {
     e.stopPropagation();
     instance.zoom(0.9);
   });

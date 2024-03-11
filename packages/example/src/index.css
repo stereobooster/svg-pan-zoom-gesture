@@ -9,7 +9,7 @@
 }
 
 /* core */
-.svgContainer {
+.svg-pan-zoom {
   overflow: hidden;
   touch-action: pan-x pan-y;
   user-select: none;
@@ -23,16 +23,16 @@ svg {
 }
 
 /* to center: */
-/* .svgContainer svg {
+/* .svg-pan-zoom svg {
   margin: auto;
 } */
 
 /* UI */
-.svgContainer {
+.svg-pan-zoom {
   position: relative;
 }
 
-.svgButtons {
+.svg-pan-zoom .buttons {
   position: absolute;
   right: 1rem;
   bottom: 1rem;
@@ -41,33 +41,33 @@ svg {
   transition-duration: 300ms;
 }
 
-.svgContainer:hover .svgButtons {
+.svg-pan-zoom:hover .buttons {
   opacity: 1;
 }
 
 @media (hover: none) {
-  .svgButtons {
+  .svg-pan-zoom .buttons {
     display: none;
   }
 
-  .svgContainer:hover .svgButtons {
+  .svg-pan-zoom:hover .buttons {
     opacity: 0;
   } 
 }
 
-.svgButtons {
+.svg-pan-zoom .buttons {
   @apply inline-flex;
 }
-.svgButtons .zoomIn {
+.svg-pan-zoom .zoom-in {
   @apply bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l;
 }
-.svgButtons .reset {
+.svg-pan-zoom .reset {
   @apply bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4;
 }
-.svgButtons .zoomOut {
+.svg-pan-zoom .zoom-out {
   @apply bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r;
 }
 
 /* debug */
-/* .svgContainer { border: 1px solid green; }
+/* .svg-pan-zoom { border: 1px solid green; }
 svg { border: 1px solid red; } */
