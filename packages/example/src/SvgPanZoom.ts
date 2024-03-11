@@ -7,6 +7,8 @@ export class SvgPanZoom {
   #curMatrix = identity;
   #raf = 0;
   #listeners: Record<string, any>;
+  #oneFinger: boolean = false;
+  #oneFingerCb?: (flag: boolean) => void;
 
   constructor(element: HTMLElement | SVGSVGElement, container: HTMLElement) {
     this.#element = element;
@@ -17,10 +19,17 @@ export class SvgPanZoom {
     let originXY: Coords = [];
     let currentXY: Coords = [];
 
+    let dragPosition: Coords = [];
+
     const onPointerDown = (e: MouseEvent | TouchEvent) => {
       const xy = this.#getXY(e);
       if ("touches" in e) {
         mousedown = e.touches.length === 2;
+        if (e.touches.length === 1) {
+          dragPosition = this.#getXY(e, false);
+        } else {
+          this.#fingerDrag(false);
+        }
         if (mousedown) e.preventDefault();
         if (e.touches.length === 1) {
           if (tapedTwice) {
@@ -48,6 +57,8 @@ export class SvgPanZoom {
     const onPointerUp = (e: MouseEvent | TouchEvent) => {
       if ("touches" in e) {
         mousedown = e.touches.length === 2;
+        if (e.touches.length === 0) this.#fingerDrag(false);
+        if (e.touches.length === 1) dragPosition = this.#getXY(e, false);
       } else {
         mousedown = false;
         this.#container.style.cursor = "grab";
@@ -55,6 +66,15 @@ export class SvgPanZoom {
     };
 
     const onPointerMove = (e: MouseEvent | TouchEvent) => {
+      if ("touches" in e) {
+        const newDragPosition = this.#getXY(e, false);
+        if (
+          e.touches.length === 1 &&
+          distance([dragPosition[0], newDragPosition[0]]) > 20
+        ) {
+          this.#fingerDrag(true);
+        }
+      }
       if (!mousedown) return;
       let xy = this.#getXY(e);
       let isPinch = false;
@@ -146,6 +166,16 @@ export class SvgPanZoom {
       this.#element.style.transitionDuration = "";
       this.#element.style.transitionProperty = "";
     }, t);
+  }
+
+  #fingerDrag(one: boolean) {
+    if (this.#oneFinger === one) return;
+    this.#oneFinger = one;
+    this.#oneFingerCb && this.#oneFingerCb(one);
+  }
+
+  onOneFingerDrag(cb: (flag: boolean) => void) {
+    this.#oneFingerCb = cb;
   }
 
   reset() {
