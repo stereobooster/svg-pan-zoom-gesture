@@ -15,7 +15,7 @@ function init() {
   const buttons = document.createElement("div");
   buttons.innerHTML = `
     <button class="zoomIn" tabindex="-1">+</button>
-    <button class="reset" tabindex="-1">•</button>
+    <button class="reset" tabindex="-1">↺</button>
     <button class="zoomOut" tabindex="-1">-</button>
   `;
   buttons.className = "svgButtons";
