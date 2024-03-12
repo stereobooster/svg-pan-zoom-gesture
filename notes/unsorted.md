@@ -1,5 +1,7 @@
 ## Missing features
 
+- maybe provide CSS in npm package for default UI?
+- maybe change name of package to `svg-pan-zoom-gestures`?
 - animations/gestures
   - rubber-band on over-drag
   - spring animations
