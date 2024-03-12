@@ -17,6 +17,8 @@ Pay attention:
 
 ## Demo
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/4bdb3997-ed5f-4506-bb77-95595d2e6562/deploy-status)](https://app.netlify.com/sites/svg-pan-zoom/deploys)
+
 [svg-pan-zoom demo](https://svg-pan-zoom.stereobooster.com/)
 
 ## Usage

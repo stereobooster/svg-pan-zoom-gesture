@@ -1,7 +1,5 @@
 # svg-pan-zoom
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/4bdb3997-ed5f-4506-bb77-95595d2e6562/deploy-status)](https://app.netlify.com/sites/svg-pan-zoom/deploys)
-
 Small JS library to add **pan and zoom** functionality to **SVG** (inline or image). It supports **gestures** for all types of devices:
 
 | intention | mouse                   | trackpad/touchpad | touchscren      |
@@ -18,6 +16,8 @@ Pay attention:
 - all actions are available through gestures, so it works without UI
 
 ## Demo
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/4bdb3997-ed5f-4506-bb77-95595d2e6562/deploy-status)](https://app.netlify.com/sites/svg-pan-zoom/deploys)
 
 [svg-pan-zoom demo](https://svg-pan-zoom.stereobooster.com/)
 
