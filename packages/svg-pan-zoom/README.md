@@ -17,7 +17,7 @@ Pay attention:
 
 ## Demo
 
-https://svg-pan-zoom.stereobooster.com/
+[svg-pan-zoom demo](https://svg-pan-zoom.stereobooster.com/)
 
 ## Usage
 
