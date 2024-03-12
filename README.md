@@ -2,73 +2,177 @@
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/4bdb3997-ed5f-4506-bb77-95595d2e6562/deploy-status)](https://app.netlify.com/sites/svg-pan-zoom/deploys)
 
-Basic idea is to add pan and zoom to SVG. For example like in Google maps or GitHub:
+Small JS library to add **pan and zoom** functionality to **SVG** (inline or image). It supports **gestures** for all types of devices:
 
-![](./notes/github-mermaid.png)
+| intention | mouse                   | trackpad/touchpad | touchscren      |
+| --------- | ----------------------- | ----------------- | --------------- |
+| pan       | clik + move             | click + move      | two finger drag |
+| zoom      | <kbd>Ctrl</kbd> + wheel | pinch             | pinch           |
+| reset     | double click            | double click      | double tap      |
+|           |                         |                   |                 |
+| scrool    | wheel                   | two finger drag   | one finger drag |
 
-## TODO
+Important:
 
-- readme with example usage and basic CSS
-- publish package
+- gestures intentionally selected to not interfere with the system's default scroll gestures, to avoid "scroll traps"
+- all actions are available through gestures, so it works without UI
 
-## UX
+## Demo
 
-### Interaction
+https://svg-pan-zoom.stereobooster.com/
 
-| intention | keyboard                   | mouse            | trackpad/touchpad       | touchscren          |
-| --------- | -------------------------- | ---------------- | ----------------------- | ------------------- |
-| scrool    | <kbd>↑</kbd>, <kbd>↓</kbd> | (3) wheel        | (5) two finger drag     | (6) one finger drag |
-| pan       | (1)                        | left clik + move | one finger click + move | two finger drag     |
-| zoom      | (2)                        | (4)              | pinch                   | pinch               |
-| reset     | (7)                        | double click     | double click            | double tap          |
+## Usage
 
-Options:
+There are two flavors:
 
-- 1, 2, 4, 7 - we can add buttons (like in GiiHub screenshot above)
-- 1 - focus + <kbd>↑</kbd>, <kbd>↓</kbd>, <kbd>←</kbd>, <kbd>→</kbd>
-- 2 - focus + <kbd>+</kbd>, <kbd>-</kbd>
-- 4 - <kbd>Cmd</kbd> + wheel
-- 7 - <kbd>Esc</kbd>
+- Headless - without UI
+- Default UI
 
-Notes:
+### Headless
 
-- 3, 5 - I don't want to use wheel (mouse) or two finger drag (trackpad) for zoom to avoid problem with scroll trap.
-- 6 - I don't want to use one finger drag (touchscreen) for pan. Instead, when people would use one finger drag over SVG, it would show overlay which instructs people to use two fingers
+```ts
+import { SvgPanZoom } from "@stereobooster/svg-pan-zoom";
 
-### Missing features
+document.querySelectorAll(".svg-pan-zoom").forEach((container) => {
+  const element = container.querySelector("svg,img");
+  if (!element) return;
+  new SvgPanZoom({ element, container }).on();
+});
+```
 
-- core
-  - overlay (see above point 6)
-- other
-  - max, min zoom
-  - fit, resize, crop, center
-- fancy
-  - minimap
-  - zoom to object
-  - rubber-band on over-drag
-  - spring animations
-  - full-screen
-- HTML custom element
+Additionally following CSS is required:
 
-## Implementation
+```css
+.svg-pan-zoom {
+  overflow: hidden;
+  touch-action: pan-x pan-y;
+  user-select: none;
+  cursor: grab;
+}
 
-### Transformation
+.svg-pan-zoom svg,
+.svg-pan-zoom img {
+  pointer-events: none;
+  /* need to center smaller images */
+  margin: auto;
+  /* need to fit bigger images */
+  max-width: 100%;
+  height: auto;
+}
+```
 
-- [svg `viewBox`](https://css-tricks.com/creating-a-panning-effect-for-svg/)
-- [root element `transform`](https://www.petercollingridge.co.uk/tutorials/svg/interactive/pan-and-zoom/)
-- [`position: relative` and `CSS transform`](https://stackblitz.com/edit/multi-touch-trackpad-gesture?file=index.js)
-  - see also [use-gesture example](https://codesandbox.io/p/sandbox/github/pmndrs/use-gesture/tree/main/demo/src/sandboxes/card-zoom?file=%2Fsrc%2FApp.tsx%3A22%2C10-22%2C15)
+Instance methods:
 
-### Other
+- `on()` - adds event listeners
+- `off()` - removes event listeners
+- `pan(dx, dy)` - pans image
+- `zoom(scale)` - zooms image
+- `reset()` - resets pan and zoom values
 
-- [Detect touchpad vs mouse in Javascript](https://stackoverflow.com/a/62415754)
-- [Affine matrix](https://upload.wikimedia.org/wikipedia/commons/2/2c/2D_affine_transformation_matrix.svg)
-- [transform matrix](https://developer.mozilla.org/en-US/docs/Web/CSS/transform-function/matrix)
-- [DOMMatrix](https://developer.mozilla.org/en-US/docs/Web/API/DOMMatrix)
+### Default UI
+
+```ts
+import { SvgPanZoomUi } from "@stereobooster/svg-pan-zoom";
+
+document.querySelectorAll(".svg-pan-zoom").forEach((container) => {
+  const element = container.querySelector("svg,img");
+  if (!element) return;
+  new SvgPanZoomUi({ element, container }).on();
+});
+```
+
+Additionally, CSS to style UI required:
+
+```css
+.svg-pan-zoom .buttons {
+}
+.svg-pan-zoom .zoom-in {
+}
+.svg-pan-zoom .reset {
+}
+.svg-pan-zoom .zoom-out {
+}
+
+.svg-pan-zoom {
+  position: relative;
+}
+
+.svg-pan-zoom .buttons {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  opacity: 0;
+  transition-property: opacity;
+  transition-duration: 300ms;
+}
+
+.svg-pan-zoom:hover .buttons {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .svg-pan-zoom .buttons {
+    display: none;
+  }
+}
+
+.touchscreen-warning {
+  position: absolute;
+  right: 0rem;
+  bottom: 0rem;
+  left: 0rem;
+  top: 0rem;
+  pointer-events: none;
+  display: none;
+  opacity: 0;
+  transition-property: opacity;
+  transition-duration: 300ms;
+}
+
+.touchscreen-warning.active {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .touchscreen-warning {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 3rem;
+    text-align: center;
+    padding: 1rem;
+  }
+}
+```
+
+You can configure HTML classes used by UI:
+
+```ts
+const classes = {
+  zoomIn: "zoom-in",
+  reset: "reset",
+  zoomOut: "zoom-out",
+  buttons: "buttons",
+  tsWarning: "touchscreen-warning",
+  tsWarningActive: "active",
+};
+
+new SvgPanZoomUi({ element, container, classes });
+```
+
+and message with instructions for the touchscreen:
+
+```ts
+const message = "Use two fingers to pan and zoom";
+
+new SvgPanZoomUi({ element, container, message });
+```
 
 ## Alternatives
 
-There are a lot of solutions for this problem:
+There are a lot of solutions for this task:
 
 - https://github.com/bumbu/svg-pan-zoom
 - https://jillix.github.io/svg.pan-zoom.js/

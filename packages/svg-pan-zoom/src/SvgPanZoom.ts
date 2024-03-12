@@ -69,7 +69,7 @@ export class SvgPanZoom {
         if (e.touches.length === 1) dragPosition = this.#getXY(e, false);
       } else {
         mousedown = false;
-        this.#container.style.cursor = "grab";
+        this.#container.style.cursor = "";
       }
     };
 
