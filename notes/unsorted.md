@@ -1,13 +1,14 @@
 ## Missing features
 
+- animations/gestures
+  - rubber-band on over-drag
+  - spring animations
 - other
   - max, min zoom
   - fit, resize, crop, center
 - fancy
   - minimap
   - zoom to object
-  - rubber-band on over-drag
-  - spring animations
   - full-screen
 - HTML custom element
 
