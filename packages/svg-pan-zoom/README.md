@@ -8,7 +8,7 @@ Small JS library to add **pan and zoom** functionality to **SVG** (inline or ima
 | zoom      | <kbd>Ctrl</kbd> + wheel | pinch             | pinch           |
 | reset     | double click            | double click      | double tap      |
 |           |                         |                   |                 |
-| scrool    | wheel                   | two finger drag   | one finger drag |
+| scroll    | wheel                   | two finger drag   | one finger drag |
 
 Important:
 
