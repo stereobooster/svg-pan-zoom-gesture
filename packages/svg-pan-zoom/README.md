@@ -13,7 +13,7 @@ Small JS library to add **pan and zoom** functionality to **SVG** (inline or ima
 Pay attention:
 
 - gestures intentionally selected to not interfere with the system's default scroll gestures, **to avoid "scroll traps"**
-- all actions are available through gestures, so it works without UI
+- all actions are available through gestures, so it works without UI. You can add UI, though. Library exposes methods for this, like `pan(dx, dy)` and `zoom(scale)`
 
 ## Demo
 
