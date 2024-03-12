@@ -72,6 +72,7 @@ Instance methods:
 ### Default UI
 
 ```ts
+import "@stereobooster/svg-pan-zoom/css/SvgPanZoomUi.css";
 import { SvgPanZoomUi } from "@stereobooster/svg-pan-zoom";
 
 document.querySelectorAll(".svg-pan-zoom").forEach((container) => {
@@ -81,69 +82,20 @@ document.querySelectorAll(".svg-pan-zoom").forEach((container) => {
 });
 ```
 
-Additionally, CSS to style UI required:
+Additionally, CSS to style UI required (for example with Tailwind):
 
 ```css
 .svg-pan-zoom .buttons {
+  @apply inline-flex;
 }
 .svg-pan-zoom .zoom-in {
+  @apply bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l;
 }
 .svg-pan-zoom .reset {
+  @apply bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4;
 }
 .svg-pan-zoom .zoom-out {
-}
-
-.svg-pan-zoom {
-  position: relative;
-}
-
-.svg-pan-zoom .buttons {
-  position: absolute;
-  right: 1rem;
-  bottom: 1rem;
-  opacity: 0;
-  transition-property: opacity;
-  transition-duration: 300ms;
-}
-
-.svg-pan-zoom:hover .buttons {
-  opacity: 1;
-}
-
-@media (hover: none) {
-  .svg-pan-zoom .buttons {
-    display: none;
-  }
-}
-
-.touchscreen-warning {
-  position: absolute;
-  right: 0rem;
-  bottom: 0rem;
-  left: 0rem;
-  top: 0rem;
-  pointer-events: none;
-  display: none;
-  opacity: 0;
-  transition-property: opacity;
-  transition-duration: 300ms;
-}
-
-.touchscreen-warning.active {
-  opacity: 1;
-}
-
-@media (hover: none) {
-  .touchscreen-warning {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    font-size: 3rem;
-    text-align: center;
-    padding: 1rem;
-  }
+  @apply bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r;
 }
 ```
 

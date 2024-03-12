@@ -1,5 +1,6 @@
-import "./index.css";
+import "@stereobooster/svg-pan-zoom/css/SvgPanZoomUi.css";
 import { SvgPanZoomUi } from "@stereobooster/svg-pan-zoom";
+import "./index.css";
 
 document.querySelectorAll(".svg-pan-zoom").forEach((container) => {
   const element = container.querySelector("svg,img");

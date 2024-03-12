@@ -1,0 +1,73 @@
+/* Core */
+
+.svg-pan-zoom {
+  overflow: hidden;
+  touch-action: pan-x pan-y;
+  user-select: none;
+  cursor: grab;
+}
+
+.svg-pan-zoom svg,
+.svg-pan-zoom img {
+  pointer-events: none;
+  /* need to center smaller images or fix bug in zoom functionality */
+  margin: auto;
+  /* need to fit bigger images */
+  max-width: 100%;
+  height: auto;
+}
+
+/* UI */
+
+.svg-pan-zoom {
+  position: relative;
+}
+
+.svg-pan-zoom .buttons {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  opacity: 0;
+  transition-property: opacity;
+  transition-duration: 300ms;
+}
+
+.svg-pan-zoom:hover .buttons {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .svg-pan-zoom .buttons {
+    display: none;
+  }
+}
+
+.touchscreen-warning {
+  position: absolute;
+  right: 0rem;
+  bottom: 0rem;
+  left: 0rem;
+  top: 0rem;
+  pointer-events: none;
+  display: none;
+  opacity: 0;
+  transition-property: opacity;
+  transition-duration: 300ms;
+}
+
+.touchscreen-warning.active {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .touchscreen-warning {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 3rem;
+    text-align: center;
+    padding: 1rem;
+  }
+}

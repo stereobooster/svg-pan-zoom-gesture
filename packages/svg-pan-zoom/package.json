@@ -14,13 +14,21 @@
   ],
   "type": "module",
   "exports": {
-    "types": "./dist/index.d.js",
-    "default": "./dist/index.js"
+    ".": {
+      "types": "./dist/index.d.js",
+      "default": "./dist/index.js",
+      "import": "./dist/index.js"
+    },
+    "./css/*.css": {
+      "import": "./css/*.css",
+      "require": "./css/*.css"
+    }
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "files": [
-    "./dist/*"
+    "./dist/*",
+    "./css/*"
   ],
   "types": "./dist/index.d.js",
   "scripts": {
