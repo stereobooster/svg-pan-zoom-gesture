@@ -170,6 +170,14 @@ const message = "Use two fingers to pan and zoom";
 new SvgPanZoomUi({ element, container, message });
 ```
 
+## Pixelation in Safari
+
+Be aware that some CSS will cause pixelation of SVG on zoom (bug in Safari), for example:
+
+- `will-change: transform;`
+- `transform: matrix3d(...);`
+- `transition-property: transform;` (it setles after animation, though)
+
 ## Alternatives
 
 There are a lot of solutions for this task:

@@ -20,8 +20,6 @@
 .svg-pan-zoom svg,
 .svg-pan-zoom img {
   pointer-events: none;
-  /* this causes pixelation in Safari */
-  /* will-change: transform; */
   /* need to center smaller images or fix bug in zoom functionality */
   margin: auto;
   /* need to fit bigger images */
