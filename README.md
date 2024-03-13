@@ -1,5 +1,12 @@
 # svg-pan-zoom
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="logo/logo-dark.svg">
+    <img alt="" src="logo/logo.svg" width="200" height="200">
+  </picture>
+</p>
+
 Small JS library to add **pan and zoom** functionality to **SVG** (inline or image). It supports **gestures** for all types of devices:
 
 | intention | mouse                   | trackpad/touchpad | touchscren      |
@@ -144,3 +151,7 @@ There are a lot of solutions for this task:
 - https://www.jqueryscript.net/other/SVG-Pan-Zoom-jQuery-SVGPanZoom.html
 - https://www.d3indepth.com/zoom-and-pan/
 - https://www.npmjs.com/package/react-zoom-pan-pinch
+
+## Logo
+
+spread by Tomas Knopp from <a href="https://thenounproject.com/browse/icons/term/spread/" target="_blank" title="spread Icons">Noun Project</a> (CC BY 3.0)
