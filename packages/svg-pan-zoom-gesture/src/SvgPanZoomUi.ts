@@ -58,6 +58,10 @@ export class SvgPanZoomUi {
           this.#instance.zoom(0.9);
         });
     });
+    buttons.addEventListener("dblclick", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    });
     this.#buttons = buttons;
 
     const warning = document.createElement("div");

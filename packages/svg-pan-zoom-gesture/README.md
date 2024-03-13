@@ -52,12 +52,15 @@ Additionally following CSS is required:
 
 .svg-pan-zoom svg,
 .svg-pan-zoom img {
-  pointer-events: none;
-  /* need to center smaller images */
+  /* need to center smaller images or fix bug in zoom functionality */
   margin: auto;
   /* need to fit bigger images */
   max-width: 100%;
   height: auto;
+}
+
+.svg-pan-zoom img {
+  pointer-events: none;
 }
 ```
 

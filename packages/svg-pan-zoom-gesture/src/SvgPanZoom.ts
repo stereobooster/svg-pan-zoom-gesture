@@ -41,10 +41,7 @@ export class SvgPanZoom {
         if (mousedown) e.preventDefault();
         if (e.touches.length === 1) {
           if (tapedTwice) {
-            if (
-              e.target !== this.#container ||
-              distance([xy[0], originXY[0]]) > 20
-            ) {
+            if (distance([xy[0], originXY[0]]) > 20) {
               tapedTwice = false;
             } else {
               this.reset();
@@ -110,8 +107,7 @@ export class SvgPanZoom {
       }
     };
 
-    const onDblClick = (e: MouseEvent) => {
-      if (e.target !== this.#container) return;
+    const onDblClick = () => {
       this.reset();
     };
 
