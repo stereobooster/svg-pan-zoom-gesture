@@ -54,7 +54,7 @@ If you **don't have** container element in HTML:
 ```ts
 import { SvgPanZoom } from "svg-pan-zoom-gesture";
 
-document.querySelectorAll("svg").forEach((element) => {
+document.querySelectorAll("svg, img[src$='.svg' i]").forEach((element) => {
   const container = document.createElement("div");
   container.className = "svg-pan-zoom";
   element.replaceWith(container);
