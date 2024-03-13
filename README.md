@@ -37,12 +37,28 @@ There are two flavors:
 
 ### Headless
 
+If you **have container** element in HTML:
+
 ```ts
 import { SvgPanZoom } from "svg-pan-zoom-gesture";
 
 document.querySelectorAll(".svg-pan-zoom").forEach((container) => {
   const element = container.querySelector("svg,img");
   if (!element) return;
+  new SvgPanZoom({ element, container }).on();
+});
+```
+
+If you **don't have** container element in HTML:
+
+```ts
+import { SvgPanZoom } from "svg-pan-zoom-gesture";
+
+document.querySelectorAll("svg").forEach((element) => {
+  const container = document.createElement("div");
+  container.className = "svg-pan-zoom";
+  element.replaceWith(container);
+  container.append(element);
   new SvgPanZoom({ element, container }).on();
 });
 ```
