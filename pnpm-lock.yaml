@@ -17,9 +17,6 @@ importers:
 
   packages/example:
     dependencies:
-      '@stereobooster/svg-pan-zoom':
-        specifier: workspace:*
-        version: link:../svg-pan-zoom
       '@types/animejs':
         specifier: ^3.1.12
         version: 3.1.12
@@ -29,6 +26,9 @@ importers:
       animejs:
         specifier: ^3.2.2
         version: 3.2.2
+      svg-pan-zoom-gesture:
+        specifier: workspace:*
+        version: link:../svg-pan-zoom-gesture
     devDependencies:
       '@tailwindcss/typography':
         specifier: ^0.5.10
@@ -52,7 +52,7 @@ importers:
         specifier: ^0.2.3
         version: 0.2.3(vite@5.1.4)
 
-  packages/svg-pan-zoom:
+  packages/svg-pan-zoom-gesture:
     devDependencies:
       mathjs:
         specifier: ^12.4.0

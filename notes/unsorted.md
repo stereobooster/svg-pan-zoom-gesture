@@ -1,6 +1,5 @@
 ## Missing features
 
-- maybe change name of package to `svg-pan-zoom-gestures`?
 - animations/gestures
   - rubber-band on over-drag
   - spring animations

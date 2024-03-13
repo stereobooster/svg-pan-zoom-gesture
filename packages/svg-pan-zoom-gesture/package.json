@@ -1,8 +1,8 @@
 {
-  "name": "@stereobooster/svg-pan-zoom",
+  "name": "svg-pan-zoom-gesture",
   "version": "0.0.1",
   "description": "Pan and zoom for SVG images",
-  "homepage": "https://github.com/stereobooster/svg-pan-zoom",
+  "homepage": "https://github.com/stereobooster/svg-pan-zoom-gesture",
   "author": "stereobooster",
   "license": "MIT",
   "keywords": [

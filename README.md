@@ -1,4 +1,4 @@
-# svg-pan-zoom
+# svg-pan-zoom-gesture
 
 <p align="center">
   <picture>
@@ -38,7 +38,7 @@ There are two flavors:
 ### Headless
 
 ```ts
-import { SvgPanZoom } from "@stereobooster/svg-pan-zoom";
+import { SvgPanZoom } from "svg-pan-zoom-gesture";
 
 document.querySelectorAll(".svg-pan-zoom").forEach((container) => {
   const element = container.querySelector("svg,img");
@@ -79,8 +79,8 @@ Instance methods:
 ### Default UI
 
 ```ts
-import "@stereobooster/svg-pan-zoom/css/SvgPanZoomUi.css";
-import { SvgPanZoomUi } from "@stereobooster/svg-pan-zoom";
+import "svg-pan-zoom-gesture/css/SvgPanZoomUi.css";
+import { SvgPanZoomUi } from "svg-pan-zoom-gesture";
 
 document.querySelectorAll(".svg-pan-zoom").forEach((container) => {
   const element = container.querySelector("svg,img");
